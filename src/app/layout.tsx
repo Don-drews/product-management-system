@@ -26,14 +26,23 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={[
+          geistSans.variable,
+          geistMono.variable,
+          // ▼ 全ページ共通の基底スタイル
+          "min-h-screen bg-background text-foreground antialiased",
+        ].join(" ")}
       >
         <ThemeProvider
           attribute="class" // <html class="dark"> を自動制御
           defaultTheme="system" // "system" → OS設定を初期値にする、"light" → ライトモードが初期値になる
           enableSystem
         >
-          {children}
+          {/* ここに共通ヘッダーを今後配置予定 */}
+          <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            {children}
+          </main>
+          {/* 共通フッターを入れるならここ */}
         </ThemeProvider>
       </body>
     </html>
