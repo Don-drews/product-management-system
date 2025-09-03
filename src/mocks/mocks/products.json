@@ -1,0 +1,102 @@
+[
+  {
+    "id": "p-001",
+    "name": "Wireless Earbuds",
+    "description": "コンパクトで高音質な完全ワイヤレスイヤホン",
+    "price": 9800,
+    "imageUrl": "/placeholder/earbuds.png",
+    "categoryId": "c-gadget",
+    "createdAt": "2025-09-01T10:00:00Z",
+    "updatedAt": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "p-002",
+    "name": "Smart Watch",
+    "description": "心拍数や睡眠を計測できる最新型スマートウォッチ",
+    "price": 15800,
+    "imageUrl": "/placeholder/watch.png",
+    "categoryId": "c-gadget",
+    "createdAt": "2025-09-01T10:10:00Z",
+    "updatedAt": "2025-09-01T10:10:00Z"
+  },
+  {
+    "id": "p-003",
+    "name": "Organic Coffee Beans",
+    "description": "有機栽培された香り豊かなコーヒー豆 500g",
+    "price": 2400,
+    "imageUrl": "/placeholder/coffee.png",
+    "categoryId": "c-food",
+    "createdAt": "2025-09-01T10:20:00Z",
+    "updatedAt": "2025-09-01T10:20:00Z"
+  },
+  {
+    "id": "p-004",
+    "name": "Yoga Mat",
+    "description": "クッション性が高く滑りにくいヨガマット",
+    "price": 3200,
+    "imageUrl": "/placeholder/yoga-mat.png",
+    "categoryId": "c-sports",
+    "createdAt": "2025-09-01T10:30:00Z",
+    "updatedAt": "2025-09-01T10:30:00Z"
+  },
+  {
+    "id": "p-005",
+    "name": "Noise Cancelling Headphones",
+    "description": "周囲の雑音をカットして音楽に集中できるヘッドホン",
+    "price": 24800,
+    "imageUrl": "/placeholder/headphones.png",
+    "categoryId": "c-gadget",
+    "createdAt": "2025-09-01T10:40:00Z",
+    "updatedAt": "2025-09-01T10:40:00Z"
+  },
+  {
+    "id": "p-006",
+    "name": "Running Shoes",
+    "description": "軽量でクッション性に優れたランニングシューズ",
+    "price": 8900,
+    "imageUrl": "/placeholder/shoes.png",
+    "categoryId": "c-sports",
+    "createdAt": "2025-09-01T10:50:00Z",
+    "updatedAt": "2025-09-01T10:50:00Z"
+  },
+  {
+    "id": "p-007",
+    "name": "Cookbook",
+    "description": "人気シェフによる家庭料理レシピ集",
+    "price": 1800,
+    "imageUrl": "/placeholder/book.png",
+    "categoryId": "c-book",
+    "createdAt": "2025-09-01T11:00:00Z",
+    "updatedAt": "2025-09-01T11:00:00Z"
+  },
+  {
+    "id": "p-008",
+    "name": "Bluetooth Speaker",
+    "description": "防水仕様でアウトドアでも使えるポータブルスピーカー",
+    "price": 6400,
+    "imageUrl": "/placeholder/speaker.png",
+    "categoryId": "c-gadget",
+    "createdAt": "2025-09-01T11:10:00Z",
+    "updatedAt": "2025-09-01T11:10:00Z"
+  },
+  {
+    "id": "p-009",
+    "name": "Green Tea Set",
+    "description": "急須と茶葉がセットになった日本茶スターターキット",
+    "price": 4200,
+    "imageUrl": "/placeholder/tea.png",
+    "categoryId": "c-food",
+    "createdAt": "2025-09-01T11:20:00Z",
+    "updatedAt": "2025-09-01T11:20:00Z"
+  },
+  {
+    "id": "p-010",
+    "name": "Backpack",
+    "description": "収納力抜群で通勤・通学に最適なバックパック",
+    "price": 11800,
+    "imageUrl": "/placeholder/backpack.png",
+    "categoryId": "c-sports",
+    "createdAt": "2025-09-01T11:30:00Z",
+    "updatedAt": "2025-09-01T11:30:00Z"
+  }
+]
