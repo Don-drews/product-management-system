@@ -15,36 +15,48 @@ type Props = {
 };
 
 export default function ProductCard({ product, liked, onToggleLike }: Props) {
+  // 画像が無いときのフォールバック（任意）
+  const img = product.imageUrl || "/placeholder/no-image.png";
+
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden transition-shadow hover:shadow-md">
+      {/* 画像領域：比率固定 & レスポンシブ最適化 */}
       <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-900">
         <Image
-          src={product.imageUrl}
+          src={img}
           alt={product.name}
           fill
           className="object-cover"
+          // 画面幅に応じて最適な画像サイズを配信（重要）
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          priority={false}
         />
       </div>
 
+      {/* タイトルなど */}
       <CardHeader className="pb-2">
-        <h2 className="text-base font-medium line-clamp-1">{product.name}</h2>
+        {/* モバイル1行、省スペース。広い画面では2行まで表示（line-clamp） */}
+        <h2 className="text-base sm:text-lg font-medium line-clamp-1 sm:line-clamp-2">
+          {product.name}
+        </h2>
       </CardHeader>
 
+      {/* 価格 & いいね */}
       <CardContent className="flex items-center justify-between">
-        <span className="text-lg font-semibold">
+        <span className="text-lg sm:text-xl font-semibold">
           ¥{formatJPY(product.price)}
         </span>
+
         <Button
           variant={liked ? "default" : "outline"}
           size="sm"
           onClick={onToggleLike}
           aria-pressed={liked}
           aria-label={liked ? "いいね解除" : "いいね"}
-          className="gap-1"
+          className="gap-1 h-9"
         >
           <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
-          {liked ? "Liked" : "Like"}
+          <span className="hidden sm:inline">{liked ? "Liked" : "Like"}</span>
         </Button>
       </CardContent>
     </Card>
