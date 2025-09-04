@@ -1,6 +1,7 @@
 import { Product } from "@/types/product";
 import { prisma } from "../src/lib/prisma";
-import products from "../src/mocks/products.json" assert { type: "json" };
+import productsJson from "../src/mocks/products.json";
+const products = productsJson as Product[];
 
 // ダミーJSONは categoryId: "c-gadget" のような形式なので、slugに直してからDBのIDへ
 const CATEGORIES = [
