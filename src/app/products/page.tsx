@@ -1,33 +1,31 @@
-// "use client";
+"use client";
 
+import { useMemo, useState } from "react";
 import ThemeToggle from "@/components/theme-toggle";
-// import ProductCard from "@/components/product-card";
-// import type { Product } from "@/types/product";
+import ProductGrid from "@/components/product-grid";
+import products from "@/mocks/products.json";
+import type { Product } from "@/types/product";
 
-// const dummy: Product = {
-//   id: "p-001",
-//   name: "Wireless Earbuds",
-//   description: "コンパクトで高音質な完全ワイヤレスイヤホン",
-//   price: 9800,
-//   imageUrl: "/placeholder/no-image.png",
-//   categoryId: "c-gadget",
-//   createdAt: "2025-09-01T10:00:00Z",
-//   updatedAt: "2025-09-01T10:00:00Z",
-// };
+export default function ProductsPage() {
+  const [liked, setLiked] = useState<Record<string, boolean>>({});
+  const toggleLike = (id: string) => setLiked((s) => ({ ...s, [id]: !s[id] }));
 
-export default function Page() {
+  // 並び：新しい順（createdAtが無ければidでタイブレーク）
+  const items = useMemo(() => {
+    const list = products as Product[];
+    return [...list].sort((a, b) =>
+      (b.createdAt ?? b.id).localeCompare(a.createdAt ?? a.id)
+    );
+  }, []);
+
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Products</h1>
-      <ThemeToggle />
-      <p>ここに商品一覧を作る予定</p>
-      {/* <div className="max-w-xs">
-        <ProductCard
-          product={dummy}
-          liked={false}
-          onToggleLike={() => console.log("toggle like")}
-        />
-      </div> */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Products</h1>
+        <ThemeToggle />
+      </div>
+
+      <ProductGrid products={items} liked={liked} onToggleLike={toggleLike} />
     </div>
   );
 }
