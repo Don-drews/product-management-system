@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/theme-toggle";
 import ProductGrid from "@/components/product-grid";
-// import products from "@/mocks/products.json";
 import type { Product } from "@/types/product";
 
 export default function ProductsPage() {
