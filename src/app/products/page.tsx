@@ -66,6 +66,7 @@ export default function ProductsPage() {
       } catch (e) {
         if (e instanceof DOMException && e.name === "AbortError") {
           // 正常なキャンセル。無視
+          // 修正前は入力が変わるたびに新しい fetch を投げ、前のリクエストを AbortController でキャンセルしています。その正常な中断が catch に入り、そこで console.error(e) していた
           return;
         }
         console.warn("fetch failed:", e);
