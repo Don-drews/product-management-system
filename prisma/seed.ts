@@ -17,7 +17,7 @@ type SeedProduct = {
 };
 
 // __dirname 基準で JSON パス解決 → ファイル読込 → parse
-const jsonPath = path.resolve(__dirname, "../src/mocks/products.json");
+const jsonPath = path.resolve(process.cwd(), "src/mocks/products.json");
 const products = JSON.parse(
   fs.readFileSync(jsonPath, "utf-8")
 ) as SeedProduct[];
