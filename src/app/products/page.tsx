@@ -1,21 +1,29 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/theme-toggle";
 import ProductGrid from "@/components/product-grid";
-import products from "@/mocks/products.json";
+// import products from "@/mocks/products.json";
 import type { Product } from "@/types/product";
 
 export default function ProductsPage() {
+  const [items, setItems] = useState<Product[]>([]);
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const toggleLike = (id: string) => setLiked((s) => ({ ...s, [id]: !s[id] }));
 
-  // 並び：新しい順（createdAtが無ければidでタイブレーク）
-  const items = useMemo(() => {
-    const list = products as Product[];
-    return [...list].sort((a, b) =>
-      (b.createdAt ?? b.id).localeCompare(a.createdAt ?? a.id)
-    );
+  useEffect(() => {
+    const load = async () => {
+      const res = await fetch("/api/products", {
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        console.error("failed to fetch products", await res.text());
+        return;
+      }
+      const json = await res.json();
+      setItems(json.items as Product[]);
+    };
+    load();
   }, []);
 
   return (
