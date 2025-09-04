@@ -64,7 +64,11 @@ export default function ProductsPage() {
         const json = await res.json();
         setItems(json.items as Product[]);
       } catch (e) {
-        console.error(e);
+        if (e instanceof DOMException && e.name === "AbortError") {
+          // 正常なキャンセル。無視
+          return;
+        }
+        console.warn("fetch failed:", e);
       } finally {
         setLoading(false);
       }
