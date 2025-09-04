@@ -1,7 +1,19 @@
 import { Product } from "../src/types/product";
 import { prisma } from "../src/lib/prisma";
 import productsJson from "../src/mocks/products.json";
-const products = productsJson as Product[];
+
+type SeedProduct = {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+  imageUrl: string;
+  categoryId: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+const products = productsJson as SeedProduct[];
 
 // ダミーJSONは categoryId: "c-gadget" のような形式なので、slugに直してからDBのIDへ
 const CATEGORIES = [
