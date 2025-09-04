@@ -1,21 +1,26 @@
-// prisma/seed.ts
 import { PrismaClient } from "@prisma/client";
-import productsJson from "../src/mocks/products.json";
+import fs from "node:fs";
+import path from "node:path";
 
-const prisma = new PrismaClient(); // seed 内で直接 PrismaClient を生成
+const prisma = new PrismaClient();
 
+// ダミーJSONの型（ローカル定義）
 type SeedProduct = {
   id: string;
   name: string;
   description?: string;
   price: number;
   imageUrl: string;
-  categoryId: string;
+  categoryId: string; // 例: "c-gadget"
   createdAt?: string;
   updatedAt?: string;
 };
 
-const products = productsJson as SeedProduct[];
+// __dirname 基準で JSON パス解決 → ファイル読込 → parse
+const jsonPath = path.resolve(__dirname, "../src/mocks/products.json");
+const products = JSON.parse(
+  fs.readFileSync(jsonPath, "utf-8")
+) as SeedProduct[];
 
 const CATEGORIES = [
   { name: "Gadget", slug: "gadget" },
@@ -24,13 +29,11 @@ const CATEGORIES = [
   { name: "Book", slug: "book" },
 ];
 
-function toSlugFromDummy(dummyCategoryId: string) {
-  return dummyCategoryId.startsWith("c-")
-    ? dummyCategoryId.slice(2)
-    : dummyCategoryId;
-}
+const toSlugFromDummy = (dummyId: string) =>
+  dummyId?.startsWith("c-") ? dummyId.slice(2) : dummyId;
 
 async function main() {
+  // 1) カテゴリ upsert
   const slugToId = new Map<string, string>();
   for (const c of CATEGORIES) {
     const created = await prisma.category.upsert({
@@ -42,6 +45,7 @@ async function main() {
     slugToId.set(created.slug, created.id);
   }
 
+  // 2) 商品 upsert
   for (const p of products) {
     const slug = toSlugFromDummy(p.categoryId);
     const categoryId = slugToId.get(slug);
