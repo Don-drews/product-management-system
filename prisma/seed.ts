@@ -1,6 +1,8 @@
-import { Product } from "../src/types/product";
-import { prisma } from "../src/lib/prisma";
+// prisma/seed.ts
+import { PrismaClient } from "@prisma/client";
 import productsJson from "../src/mocks/products.json";
+
+const prisma = new PrismaClient(); // seed 内で直接 PrismaClient を生成
 
 type SeedProduct = {
   id: string;
@@ -15,7 +17,6 @@ type SeedProduct = {
 
 const products = productsJson as SeedProduct[];
 
-// ダミーJSONは categoryId: "c-gadget" のような形式なので、slugに直してからDBのIDへ
 const CATEGORIES = [
   { name: "Gadget", slug: "gadget" },
   { name: "Food", slug: "food" },
@@ -30,7 +31,6 @@ function toSlugFromDummy(dummyCategoryId: string) {
 }
 
 async function main() {
-  // 1) カテゴリを upsert（存在しなければ作成）
   const slugToId = new Map<string, string>();
   for (const c of CATEGORIES) {
     const created = await prisma.category.upsert({
@@ -42,8 +42,7 @@ async function main() {
     slugToId.set(created.slug, created.id);
   }
 
-  // 2) Product を upsert（同じ id があればスキップ）
-  for (const p of products as Product[]) {
+  for (const p of products) {
     const slug = toSlugFromDummy(p.categoryId);
     const categoryId = slugToId.get(slug);
     if (!categoryId) {
@@ -52,7 +51,7 @@ async function main() {
     }
 
     await prisma.product.upsert({
-      where: { id: p.id }, // ダミーJSONの id をそのまま使う
+      where: { id: p.id },
       update: {},
       create: {
         id: p.id,
@@ -61,7 +60,6 @@ async function main() {
         price: p.price,
         imageUrl: p.imageUrl,
         categoryId,
-        // createdAt/updatedAt がJSONにあれば使う（無ければDBのdefault）
         ...(p.createdAt ? { createdAt: new Date(p.createdAt) } : {}),
         ...(p.updatedAt ? { updatedAt: new Date(p.updatedAt) } : {}),
       },
