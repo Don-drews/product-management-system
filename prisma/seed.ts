@@ -1,4 +1,4 @@
-import { Product } from "@/types/product";
+import { Product } from "../src/types/product";
 import { prisma } from "../src/lib/prisma";
 import productsJson from "../src/mocks/products.json";
 const products = productsJson as Product[];
