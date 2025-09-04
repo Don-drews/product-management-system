@@ -37,34 +37,39 @@ export default function ProductCard({ product, liked, onToggleLike }: Props) {
             priority={false}
           />
         </div>
+      </Link>
 
-        {/* タイトルなど */}
-        <CardHeader className="pb-2">
+      {/* タイトルなど */}
+      <CardHeader className="pb-2">
+        <Link
+          href={`/products/${product.id}`}
+          className="block focus:outline-none focus:ring-2 focus:ring-ring rounded-xl"
+        >
           {/* モバイル1行、省スペース。広い画面では2行まで表示（line-clamp） */}
           <h2 className="text-base sm:text-lg font-medium line-clamp-1 sm:line-clamp-2">
             {product.name}
           </h2>
-        </CardHeader>
+        </Link>
+      </CardHeader>
 
-        {/* 価格 & いいね */}
-        <CardContent className="flex items-center justify-between">
-          <span className="text-lg sm:text-xl font-semibold">
-            ¥{formatJPY(product.price)}
-          </span>
+      {/* 価格 & いいね */}
+      <CardContent className="flex items-center justify-between">
+        <span className="text-lg sm:text-xl font-semibold">
+          ¥{formatJPY(product.price)}
+        </span>
 
-          <Button
-            variant={liked ? "default" : "outline"}
-            size="sm"
-            onClick={onToggleLike}
-            aria-pressed={liked}
-            aria-label={liked ? "いいね解除" : "いいね"}
-            className="gap-1 h-9"
-          >
-            <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
-            <span className="hidden sm:inline">{liked ? "Liked" : "Like"}</span>
-          </Button>
-        </CardContent>
-      </Link>
+        <Button
+          variant={liked ? "default" : "outline"}
+          size="sm"
+          onClick={onToggleLike}
+          aria-pressed={liked}
+          aria-label={liked ? "いいね解除" : "いいね"}
+          className="gap-1 h-9"
+        >
+          <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
+          <span className="hidden sm:inline">{liked ? "Liked" : "Like"}</span>
+        </Button>
+      </CardContent>
     </Card>
   );
 }
