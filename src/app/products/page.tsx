@@ -32,21 +32,6 @@ export default function ProductsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
-  // useEffect(() => {
-  //   const load = async () => {
-  //     const res = await fetch("/api/products", {
-  //       cache: "no-store",
-  //     });
-  //     if (!res.ok) {
-  //       console.error("failed to fetch products", await res.text());
-  //       return;
-  //     }
-  //     const json = await res.json();
-  //     setItems(json.items as Product[]);
-  //   };
-  //   load();
-  // }, []);
-
   // デバウンス後にAPIへ
   useEffect(() => {
     const controller = new AbortController();
