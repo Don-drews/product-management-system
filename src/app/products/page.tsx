@@ -29,6 +29,7 @@ export default function ProductsPage() {
     if (query) params.set("q", query);
     else params.delete("q"); // 検索バーになにも入力されていない場合はURLから"q"を削除し、"/products?q="のようなからクエリを残さない。
     router.push(`/products?${params.toString()}`); // push は履歴を1件積むので、検索中に1文字入力するたびに「戻るボタン」で1文字ずつ戻れる状態になる（これは好み。履歴を汚したくないなら router.replace(...) もアリ）。
+    // ↓ 「useEffect 内で「外側のスコープから参照した値」を依存配列に入れろ」っていうeslintのreact-hooks/exhaustive-deps ルールを無効にしてくれる。
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
