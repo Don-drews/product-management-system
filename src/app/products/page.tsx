@@ -32,7 +32,7 @@ export default function ProductsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
-  // デバウンス後にAPIへ
+  // debounced（検索文字列）に変更があるたびにfetch
   useEffect(() => {
     const controller = new AbortController();
     (async () => {
