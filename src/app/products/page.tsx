@@ -23,7 +23,7 @@ export default function ProductsPage() {
   const [items, setItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // 入力が変わったらURLの q を更新（履歴を残す）
+  // 入力が変わったらURLの q を更新（履歴を検索バーに残す）
   useEffect(() => {
     const params = new URLSearchParams(sp.toString());
     if (query) params.set("q", query);
