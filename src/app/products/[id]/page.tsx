@@ -2,14 +2,20 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getProductById } from "@/server/products";
+import type { Metadata } from "next";
 
 function formatJPY(n: number) {
   return new Intl.NumberFormat("ja-JP").format(n);
 }
 
 // タイトルを商品名に
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const p = await getProductById(params.id);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params; // ← まずawaitしてから取り出す
+  const p = await getProductById(id);
   return {
     title: p ? `${p.name} | Products` : "商品が見つかりません | Products",
   };
@@ -18,9 +24,10 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 export default async function ProductDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>; // 受け取りをPromiseに
 }) {
-  const p = await getProductById(params.id);
+  const { id } = await params; // ← まずawaitしてから取り出す
+  const p = await getProductById(id);
   if (!p) notFound();
 
   return (
