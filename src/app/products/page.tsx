@@ -27,7 +27,7 @@ export default function ProductsPage() {
   useEffect(() => {
     const params = new URLSearchParams(sp.toString());
     if (query) params.set("q", query);
-    else params.delete("q");
+    else params.delete("q"); // 検索バーになにも入力されていない場合はURLから"q"を削除し、"/products?q="のようなからクエリを残さない。
     router.push(`/products?${params.toString()}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
