@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 
 export default function Error({
@@ -20,6 +21,11 @@ export default function Error({
       <p className="text-sm text-muted-foreground">
         商品情報の取得中に問題が発生しました。しばらくしてから再度お試しください。
       </p>
+      <div>
+        <Link href="/products" className="underline underline-offset-4">
+          商品一覧へ戻る
+        </Link>
+      </div>
       <button
         onClick={() => reset()}
         className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
