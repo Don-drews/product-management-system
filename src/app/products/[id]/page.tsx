@@ -28,7 +28,7 @@ export default async function ProductDetailPage({
 }) {
   const { id } = await params; // ← まずawaitしてから取り出す
   const p = await getProductById(id);
-  if (!p) notFound();
+  if (!p) notFound(); // notFound()は同じフォルダ階層の"not-found.tsx"が呼ばれる。なければ上の階層のnot-found.tsxが呼ばれる（親ディレクトリを順番に探していく 仕組み）。
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-6 space-y-6">
