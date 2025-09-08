@@ -5,6 +5,6 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q") ?? undefined;
 
-  const items = await listProducts(q); // ★ include 付き + DTO化済み
+  const items = await listProducts(q);
   return NextResponse.json({ items });
 }
