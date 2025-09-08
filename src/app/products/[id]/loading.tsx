@@ -1,3 +1,6 @@
+// loading.tsxはローディング時に自動で表示されるUI。
+// ページやレイアウトのコンポーネントが 非同期処理でレンダリングを待っている間に自動表示される。
+
 export default function Loading() {
   return (
     <div className="container mx-auto max-w-5xl px-4 py-6">

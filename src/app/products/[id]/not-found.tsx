@@ -1,3 +1,5 @@
+// not-found.tsx は notFound()によって404時に自動で表示されるUI
+
 import Link from "next/link";
 
 export default function NotFound() {
