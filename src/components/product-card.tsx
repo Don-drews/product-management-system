@@ -16,8 +16,9 @@ type Props = {
 };
 
 export default function ProductCard({ product, liked, onToggleLike }: Props) {
-  // 画像が無いときのフォールバック（任意）
+  // 画像が無いときのフォールバック
   const img = product.imageUrl || "/placeholder/no-image.png";
+  console.log(`product:${product.categoryName}`);
 
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-md">
@@ -50,6 +51,7 @@ export default function ProductCard({ product, liked, onToggleLike }: Props) {
             {product.name}
           </h2>
         </Link>
+        <p className="text-sm text-muted-foreground">{product.categoryName}</p>
       </CardHeader>
 
       {/* 価格 & いいね */}

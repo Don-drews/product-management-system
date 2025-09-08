@@ -5,6 +5,7 @@ export type Product = {
   price: number; // 円（整数）
   imageUrl: string;
   categoryId: string;
+  categoryName: string;
   createdAt?: string;
   updatedAt?: string;
 };

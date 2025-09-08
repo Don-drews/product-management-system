@@ -1,10 +1,13 @@
 import { prisma } from "@/lib/prisma";
-import { toProductDTO } from "@/lib/mapper/product";
+import { toProductDTO, type ProductWithCategory } from "@/lib/mapper/product";
 import type { ProductDTO } from "@/schemas/product";
 
 export async function getProductById(id: string): Promise<ProductDTO | null> {
-  const p = await prisma.product.findUnique({ where: { id } });
-  return p ? toProductDTO(p) : null;
+  const p = await prisma.product.findUnique({
+    where: { id },
+    include: { category: { select: { name: true } } },
+  });
+  return p ? toProductDTO(p as ProductWithCategory) : null;
 }
 
 export async function listProducts(q?: string): Promise<ProductDTO[]> {
@@ -14,6 +17,7 @@ export async function listProducts(q?: string): Promise<ProductDTO[]> {
   const rows = await prisma.product.findMany({
     where,
     orderBy: { createdAt: "desc" },
+    include: { category: { select: { name: true } } },
   });
-  return rows.map(toProductDTO);
+  return rows.map((r) => toProductDTO(r as ProductWithCategory));
 }
