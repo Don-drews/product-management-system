@@ -55,6 +55,7 @@ export default async function ProductDetailPage({
         {/* 詳細情報 */}
         <div className="space-y-4">
           <h2 className="text-xl md:text-2xl font-semibold">{p.name}</h2>
+          <p className="text-sm text-muted-foreground">{p.categoryName}</p>
           <div className="text-2xl font-bold">¥{formatJPY(p.price)}</div>
           {p.description && (
             <p className="text-sm leading-6 opacity-90">{p.description}</p>
