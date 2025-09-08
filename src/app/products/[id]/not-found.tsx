@@ -3,6 +3,8 @@
 import Link from "next/link";
 
 export default function NotFound() {
+  console.log(`404 Not found.`);
+
   return (
     <div className="container mx-auto max-w-2xl px-4 py-20 text-center space-y-4">
       <h1 className="text-2xl font-bold">商品が見つかりませんでした</h1>
