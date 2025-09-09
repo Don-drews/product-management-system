@@ -6,5 +6,14 @@ export const CategorySchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/, "slugは英小文字・数字・ハイフンのみ"),
 });
 
+export const CreateCategorySchema = CategorySchema.pick({
+  name: true,
+  slug: true,
+});
+
+export const UpdateCategorySchema = CreateCategorySchema.partial();
+
 // TypeScript の型を自動生成
 export type CategoryDTO = z.infer<typeof CategorySchema>;
+export type CreateCategoryInput = z.infer<typeof CategorySchema>;
+export type UpdateCategoryInput = z.infer<typeof CategorySchema>;
