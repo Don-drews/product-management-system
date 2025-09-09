@@ -15,5 +15,5 @@ export const UpdateCategorySchema = CreateCategorySchema.partial();
 
 // TypeScript の型を自動生成
 export type CategoryDTO = z.infer<typeof CategorySchema>;
-export type CreateCategoryInput = z.infer<typeof CategorySchema>;
-export type UpdateCategoryInput = z.infer<typeof CategorySchema>;
+export type CreateCategoryInput = z.infer<typeof CreateCategorySchema>;
+export type UpdateCategoryInput = z.infer<typeof UpdateCategorySchema>;
