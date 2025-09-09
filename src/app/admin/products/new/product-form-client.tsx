@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,12 +20,12 @@ export default function NewProductForm({
   const [submitting, setSubmitting] = useState(false);
 
   const {
-    register,
-    handleSubmit,
+    register, // 入力欄をRHFに登録する処理。これをスプレッド（...）で input に渡すと：「onChange → 入力値を RHF に保存」、「onBlur → フォーカス外れたときの検証など」、「ref → DOM の参照管理」を 自動で追加してくれます。
+    handleSubmit, // フォームが送信されたときに呼ばれる関数。
     formState: { errors },
     watch,
   } = useForm<CreateProductInput>({
-    resolver: zodResolver(CreateProductSchema),
+    resolver: zodResolver(CreateProductSchema), // zodResolver → Zodのスキーマ（入力ルール）をRHFのバリデーション機構にそのまま差し込むアダプター？
     defaultValues: {
       name: "",
       description: "",
@@ -33,7 +35,7 @@ export default function NewProductForm({
     },
   });
 
-  const imageUrl = watch("imageUrl");
+  const imageUrl = watch("imageUrl"); // watch("imageUrl") → 指定したフィールドの現在値を監視（画像プレビューなどに使える）
 
   const onSubmit = async (values: CreateProductInput) => {
     try {
@@ -49,8 +51,8 @@ export default function NewProductForm({
         alert("作成に失敗しました");
         return;
       }
-      router.push("/products");
-      router.refresh();
+      router.push("/products"); // 送信成功後に商品一覧ページへ移動させる
+      router.refresh(); // サーバーコンポーネントを取り直して 最新データで再描画
     } finally {
       setSubmitting(false);
     }
