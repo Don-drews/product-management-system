@@ -21,13 +21,10 @@ export const CreateProductSchema = z.object({
   name: z.string().min(1, "商品名は必須です"),
   description: z.string().optional(),
   price: z
-    .number({
-      invalid_type_error: "数値を入力してね", // 数値以外が入ったとき
-      required_error: "必須項目です",
-    })
+    .number("数値を入力してね")
     .int("有効な整数を入力してね")
     .nonnegative("0以上の数値を入力してね"),
-  //z.union([A, B]) は 「A または B のどちらかに合格すればOK」 という意味。
+  // .union([A, B]) は 「A または B のどちらかに合格すればOK」 という意味。
   imageUrl: z.union([
     z.string().url("正しいURLを入力してください"),
     relativePath, // 「/ から始まる相対パス」を許可。
