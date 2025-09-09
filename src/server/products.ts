@@ -1,6 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { toProductDTO, type ProductWithCategory } from "@/lib/mapper/product";
-import type { ProductDTO } from "@/schemas/product";
+import type {
+  CreateProductInput,
+  ProductDTO,
+  UpdateProductInput,
+} from "@/schemas/product";
 
 export async function getProductById(id: string): Promise<ProductDTO | null> {
   const productRecord = await prisma.product.findUnique({
@@ -24,13 +28,9 @@ export async function listProducts(query?: string): Promise<ProductDTO[]> {
   return rows.map((product) => toProductDTO(product as ProductWithCategory));
 }
 
-export async function CreateProduct(input: {
-  name: string;
-  description?: string;
-  price: number;
-  imageUrl: string;
-  categoryId: string;
-}): Promise<ProductDTO> {
+export async function createProduct(
+  input: CreateProductInput
+): Promise<ProductDTO> {
   const productRecord = await prisma.product.create({
     data: {
       name: input.name,
@@ -43,4 +43,25 @@ export async function CreateProduct(input: {
   });
 
   return toProductDTO(productRecord);
+}
+
+export async function updateProduct(
+  id: string,
+  input: UpdateProductInput
+): Promise<ProductDTO | null> {
+  const updated = await prisma.product
+    .update({
+      where: { id },
+      data: {
+        name: input.name,
+        description: input.description ?? undefined,
+        price: input.price,
+        imageUrl: input.imageUrl,
+        categoryId: input.categoryId,
+      },
+      include: { category: { select: { name: true } } },
+    })
+    .catch(() => null);
+
+  return updated ? toProductDTO(updated as ProductWithCategory) : null;
 }
