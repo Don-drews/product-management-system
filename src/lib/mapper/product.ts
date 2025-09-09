@@ -13,7 +13,7 @@ export function toProductDTO(p: ProductWithCategory): ProductDTO {
     price: p.price,
     imageUrl: p.imageUrl,
     categoryId: p.categoryId,
-    categoryName: p.category?.name,
+    categoryName: p.category?.name ?? "カテゴリ未設定",
     createdAt: p.createdAt.toISOString(),
     updatedAt: p.updatedAt.toISOString(),
   });
