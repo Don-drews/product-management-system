@@ -1,0 +1,10 @@
+import { z } from "zod";
+
+export const CategorySchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, "カテゴリ名は必須です"),
+  slug: z.string().regex(/^[a-z0-9-]+$/, "slugは英小文字・数字・ハイフンのみ"),
+});
+
+// TypeScript の型を自動生成
+export type CategoryDTO = z.infer<typeof CategorySchema>;
