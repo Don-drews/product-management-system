@@ -65,3 +65,12 @@ export async function updateProduct(
 
   return updated ? toProductDTO(updated as ProductWithCategory) : null;
 }
+
+export async function deleteProduct(id: string): Promise<boolean> {
+  try {
+    await prisma.product.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
+}
