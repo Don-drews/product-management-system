@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/theme-toggle";
 import ProductGrid from "@/components/product-grid";
-import type { Product } from "@/types/product";
 import SearchBar from "@/components/search-bar";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDebounce } from "@/hooks/use-debounce";
+import { ProductDTO } from "@/schemas/product";
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function ProductsPage() {
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const toggleLike = (id: string) => setLiked((s) => ({ ...s, [id]: !s[id] }));
 
-  const [items, setItems] = useState<Product[]>([]);
+  const [items, setItems] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState(false);
 
   // 入力が変わったらURLの q を更新
@@ -48,7 +48,7 @@ export default function ProductsPage() {
         });
         if (!res.ok) throw new Error(await res.text());
         const json = await res.json();
-        setItems(json.items as Product[]);
+        setItems(json.items as ProductDTO[]);
       } catch (e) {
         if (e instanceof DOMException && e.name === "AbortError") {
           // 正常なキャンセル。無視
