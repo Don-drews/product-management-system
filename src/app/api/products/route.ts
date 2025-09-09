@@ -13,6 +13,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    console.log("body:", body);
     const parsed = CreateProductSchema.parse(body); // バリデーション
     const item = await CreateProduct(parsed);
     return NextResponse.json({ item }, { status: 201 });
