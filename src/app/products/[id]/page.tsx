@@ -37,6 +37,12 @@ export default async function ProductDetailPage({
         <Link href="/products" className="text-sm underline underline-offset-4">
           一覧に戻る
         </Link>
+        <Link
+          href={`/admin/products/${id}/edit`}
+          className="text-sm underline underline-offset-4 text-blue-600"
+        >
+          編集する
+        </Link>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
