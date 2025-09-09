@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { getProductById, updateProduct } from "@/server/products";
+import {
+  deleteProduct,
+  getProductById,
+  updateProduct,
+} from "@/server/products";
 import { UpdateProductSchema } from "@/schemas/product";
 
 // 変数に"_"がつく意味 → 呼ばれているが、使用されていない変数は"_"をつける。
@@ -23,4 +27,11 @@ export async function PUT(req: Request, ctx: { params: { id: string } }) {
     console.error("❌ update failed:", error);
     return NextResponse.json({ message: "Invalid input" }, { status: 400 });
   }
+}
+
+export async function DELETE(_req: Request, ctx: { params: { id: string } }) {
+  const ok = await deleteProduct(ctx.params.id);
+  return ok
+    ? NextResponse.json({ ok: true })
+    : NextResponse.json({ message: "Not Found" }, { status: 404 });
 }
