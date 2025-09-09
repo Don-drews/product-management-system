@@ -11,7 +11,7 @@ export const ProductSchema = z.object({
   price: z.number(),
   imageUrl: z.string(),
   categoryId: z.string(),
-  categoryName: z.string().optional(),
+  categoryName: z.string(),
   createdAt: z.string(), // API返却はISO文字列に統一
   updatedAt: z.string(), // API返却はISO文字列に統一
 });
