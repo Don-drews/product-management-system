@@ -9,8 +9,7 @@ import {
   CreateProductSchema,
   type CreateProductInput,
 } from "@/schemas/product";
-
-type CategoryOption = { id: string; name: string };
+import { CategoryOption } from "@/schemas/category";
 
 export default function CreateProductForm({
   categories,
