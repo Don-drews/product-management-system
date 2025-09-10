@@ -10,8 +10,7 @@ import {
   type UpdateProductInput,
   type ProductDTO,
 } from "@/schemas/product";
-
-type CategoryOption = { id: string; name: string };
+import { CategoryOption } from "@/schemas/category";
 
 type Props = {
   product: ProductDTO;
