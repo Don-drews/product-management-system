@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { CategoryDTO, CategorySchema } from "@/schemas/category";
 
-export type CategoryOption = { id: string; name: string; slug: string };
-
 export async function listCategories(): Promise<CategoryDTO[]> {
   const categoryRecords = await prisma.category.findMany({
     orderBy: { name: "asc" },
