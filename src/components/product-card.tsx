@@ -3,14 +3,14 @@ import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
-import type { Product } from "@/types/product";
+import { ProductDTO } from "@/schemas/product";
 
 function formatJPY(n: number) {
   return new Intl.NumberFormat("ja-JP").format(n);
 }
 
 type Props = {
-  product: Product;
+  product: ProductDTO;
   liked: boolean;
   onToggleLike: () => void;
 };
