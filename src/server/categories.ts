@@ -6,14 +6,22 @@ import {
   CreateCategorySchema,
 } from "@/schemas/category";
 
-export async function listCategories(): Promise<CategoryDTO[]> {
-  const categoryRecords = await prisma.category.findMany({
+export async function listCategories(q?: string): Promise<CategoryDTO[]> {
+  const where = q
+    ? {
+        OR: [
+          { name: { contains: q, mode: "insensitive" as const } },
+          { slug: { contains: q, mode: "insensitive" as const } },
+        ],
+      }
+    : {};
+
+  const rows = await prisma.category.findMany({
+    where,
     orderBy: { name: "asc" },
     select: { id: true, name: true, slug: true },
   });
-
-  // Prismaレコード -> Zodで検証しつつDTO化
-  return categoryRecords.map((category) => CategorySchema.parse(category));
+  return rows.map((row) => CategorySchema.parse(row));
 }
 
 export async function createCategory(
