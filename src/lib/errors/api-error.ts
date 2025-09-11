@@ -5,7 +5,7 @@ import { ZodError } from "zod";
 export type ApiError = { status: number; message: string };
 
 // Prisma の既知エラーを HTTP に対応づけ
-export function mapError(e: unknown): ApiError {
+export function handleApiError(e: unknown): ApiError {
   // 1) Prisma 既知のリクエストエラー（Constraint 等）
   if (e instanceof Prisma.PrismaClientKnownRequestError) {
     switch (e.code) {
