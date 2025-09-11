@@ -31,6 +31,8 @@ export default function DeleteCategoryButton({ id }: { id: string }) {
           (res.status === 409
             ? "このカテゴリは商品から参照されています。削除できません。"
             : "削除に失敗しました");
+        console.log(`--- msg ---\n${msg}`);
+
         alert(msg);
         return;
       }
