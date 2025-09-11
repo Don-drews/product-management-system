@@ -52,3 +52,13 @@ export async function updateCategory(
 
   return updated ? CategorySchema.parse(updated) : null;
 }
+
+export async function deleteCategory(id: string): Promise<void> {
+  // 参照チェック。参照があれば 409 にしたいのでここで弾く
+  const usedCount = await prisma.product.count({ where: { categoryId: id } });
+  if (usedCount > 0) {
+    // 共通ハンドラで 409 にマッピングされる想定
+    throw new Error("Category is in use");
+  }
+  await prisma.category.delete({ where: { id } });
+}
