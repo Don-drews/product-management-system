@@ -2,20 +2,24 @@
 import { NextResponse } from "next/server";
 import { handleApiError } from "@/lib/errors/api-error";
 import { UpdateCategorySchema } from "@/schemas/category";
-import { updateCategory } from "@/server/categories";
+import {
+  deleteCategory,
+  getCategoryById,
+  updateCategory,
+} from "@/server/categories";
 
-// export async function GET(
-//   _req: Request,
-//   { params }: { params: { id: string } }
-// ) {
-//   try {
-//     const item = await getCategory(params.id);
-//     return NextResponse.json({ item }, { status: 200 });
-//   } catch (e: unknown) {
-//     const { status, message } = handleApiError(e);
-//     return NextResponse.json({ message }, { status });
-//   }
-// }
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const item = await getCategoryById(params.id);
+    return NextResponse.json({ item }, { status: 200 });
+  } catch (e: unknown) {
+    const { status, message } = handleApiError(e);
+    return NextResponse.json({ message }, { status });
+  }
+}
 
 export async function PUT(
   req: Request,
@@ -32,15 +36,15 @@ export async function PUT(
   }
 }
 
-// export async function DELETE(
-//   _req: Request,
-//   { params }: { params: { id: string } }
-// ) {
-//   try {
-//     await deleteCategory(params.id);
-//     return NextResponse.json({ ok: true }, { status: 200 });
-//   } catch (e: unknown) {
-//     const { status, message } = handleApiError(e);
-//     return NextResponse.json({ message }, { status });
-//   }
-// }
+export async function DELETE(_req: Request, ctx: { params: { id: string } }) {
+  try {
+    const cat = await getCategoryById(ctx.params.id);
+    if (!cat)
+      return NextResponse.json({ message: "Not Found" }, { status: 404 });
+    await deleteCategory(ctx.params.id);
+    return NextResponse.json({ ok: true }, { status: 200 });
+  } catch (e: unknown) {
+    const { status, message } = handleApiError(e);
+    return NextResponse.json({ message }, { status });
+  }
+}
