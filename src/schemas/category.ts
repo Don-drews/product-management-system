@@ -8,6 +8,12 @@ export const CategorySchema = z.object({
   updatedAt: z.string(), // API返却はISO文字列に統一
 });
 
+export const CategoryListItemSchema = CategorySchema.pick({
+  id: true,
+  name: true,
+  slug: true,
+});
+
 export const CreateCategorySchema = CategorySchema.pick({
   name: true,
   slug: true,
@@ -17,6 +23,7 @@ export const UpdateCategorySchema = CreateCategorySchema.partial();
 
 // TypeScript の型を自動生成
 export type CategoryDTO = z.infer<typeof CategorySchema>;
+export type CategoryListItem = z.infer<typeof CategoryListItemSchema>;
 export type CategoryOption = Pick<CategoryDTO, "id" | "name">; // フォームのセレクト用
 export type CreateCategoryInput = z.infer<typeof CreateCategorySchema>;
 export type UpdateCategoryInput = z.infer<typeof UpdateCategorySchema>;

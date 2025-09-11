@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import {
   CategoryDTO,
+  CategoryListItem,
+  CategoryListItemSchema,
   CategorySchema,
   CreateCategoryInput,
   CreateCategorySchema,
@@ -15,7 +17,7 @@ export async function getCategoryById(id: string): Promise<CategoryDTO | null> {
   return row ? CategorySchema.parse(row) : null;
 }
 
-export async function listCategories(q?: string): Promise<CategoryDTO[]> {
+export async function listCategories(q?: string): Promise<CategoryListItem[]> {
   const where = q
     ? {
         OR: [
@@ -30,7 +32,7 @@ export async function listCategories(q?: string): Promise<CategoryDTO[]> {
     orderBy: { name: "asc" },
     select: { id: true, name: true, slug: true },
   });
-  return rows.map((row) => CategorySchema.parse(row));
+  return rows.map((row) => CategoryListItemSchema.parse(row));
 }
 
 export async function createCategory(
