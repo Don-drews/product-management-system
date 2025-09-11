@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listCategories } from "@/server/categories";
 import SearchBox from "./search-box";
 import EditCategoryDialog from "@/components/categories/edit-category-dialog";
+import DeleteCategoryButton from "@/components/categories/delete-category-button";
 
 export const metadata = { title: "カテゴリ一覧 | Admin" };
 
@@ -52,6 +53,7 @@ export default async function AdminCategoriesPage({
                   <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
                   <td className="px-4 py-3">
                     <EditCategoryDialog category={c} />
+                    <DeleteCategoryButton id={c.id} />
                   </td>
                 </tr>
               ))}
