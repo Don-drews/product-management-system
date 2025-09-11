@@ -7,6 +7,14 @@ import {
   UpdateCategoryInput,
 } from "@/schemas/category";
 
+export async function getCategoryById(id: string): Promise<CategoryDTO | null> {
+  const row = await prisma.category.findUnique({
+    where: { id },
+    select: { id: true, name: true, slug: true },
+  });
+  return row ? CategorySchema.parse(row) : null;
+}
+
 export async function listCategories(q?: string): Promise<CategoryDTO[]> {
   const where = q
     ? {
