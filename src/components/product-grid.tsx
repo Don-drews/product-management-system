@@ -1,8 +1,8 @@
-import type { Product } from "@/types/product";
 import ProductCard from "@/components/product-card";
+import { ProductDTO } from "@/schemas/product";
 
 type Props = {
-  products: Product[];
+  products: ProductDTO[];
   liked: Record<string, boolean>;
   onToggleLike: (id: string) => void;
 };
