@@ -9,6 +9,7 @@ import {
   UpdateCategorySchema,
   type UpdateCategoryInput,
   type CategoryDTO,
+  CategoryListItem,
 } from "@/schemas/category";
 
 import CategoryFormFields from "./category-form-fields";
@@ -38,7 +39,7 @@ function pickDirty<T extends Record<string, unknown>>(
 export default function EditCategoryDialog({
   category,
 }: {
-  category: CategoryDTO;
+  category: CategoryListItem;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
