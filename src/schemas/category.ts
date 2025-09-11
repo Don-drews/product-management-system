@@ -4,6 +4,8 @@ export const CategorySchema = z.object({
   id: z.string(),
   name: z.string().min(1, "カテゴリ名は必須です"),
   slug: z.string().regex(/^[a-z0-9-]+$/, "slugは英小文字・数字・ハイフンのみ"),
+  createdAt: z.string(), // API返却はISO文字列に統一
+  updatedAt: z.string(), // API返却はISO文字列に統一
 });
 
 export const CreateCategorySchema = CategorySchema.pick({
