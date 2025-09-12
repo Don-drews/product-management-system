@@ -1,3 +1,4 @@
+import { toCategoryDTO } from "@/lib/mapper/category";
 import { prisma } from "@/lib/prisma";
 import {
   CategoryDTO,
@@ -12,9 +13,10 @@ import {
 export async function getCategoryById(id: string): Promise<CategoryDTO | null> {
   const row = await prisma.category.findUnique({
     where: { id },
-    select: { id: true, name: true, slug: true },
   });
-  return row ? CategorySchema.parse(row) : null;
+  console.log(`=== getCategoryById() ===\nname:` + row?.name);
+
+  return row ? toCategoryDTO(row) : null;
 }
 
 export async function listCategories(q?: string): Promise<CategoryListItem[]> {
@@ -65,7 +67,11 @@ export async function updateCategory(
 
 export async function deleteCategory(id: string): Promise<void> {
   // 参照チェック。参照があれば 409 にしたいのでここで弾く
+  console.log(`----------------- deleteCategory() -----------------`);
+
   const usedCount = await prisma.product.count({ where: { categoryId: id } });
+  console.log(`useCount:${usedCount}`);
+
   if (usedCount > 0) {
     // 共通ハンドラで 409 にマッピングされる想定
     throw new Error("Category is in use");
