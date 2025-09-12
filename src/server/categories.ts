@@ -13,6 +13,16 @@ import {
   UpdateCategoryInput,
 } from "@/schemas/category";
 
+export class NotFoundError extends Error {
+  status = 404 as const;
+}
+export class ForbiddenError extends Error {
+  status = 403 as const;
+}
+export class BadRequestError extends Error {
+  status = 400 as const;
+}
+
 /**
  * カテゴリ名が“未分類”かどうか
  */
