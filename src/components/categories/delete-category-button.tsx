@@ -15,6 +15,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
+type DeleteResponse = {
+  message?: string;
+  movedProductsCount?: number;
+  deletedCategory?: { id: string; name: string; slug: string };
+};
+
 export default function DeleteCategoryButton({
   id,
   disabled,
@@ -29,21 +35,17 @@ export default function DeleteCategoryButton({
     try {
       setLoading(true);
       const res = await fetch(`/api/categories/${id}`, { method: "DELETE" });
-      if (!res.ok) {
-        const detail = await res.json().catch(() => ({}));
-        // 409（参照あり）などを想定
-        const msg =
-          detail?.message ??
-          (res.status === 409
-            ? "このカテゴリは商品から参照されています。削除できません。"
-            : "削除に失敗しました");
-        console.log(`--- msg ---\n${msg}`);
+      const data = (await res.json().catch(() => ({}))) as DeleteResponse;
 
-        alert(msg);
+      if (!res.ok) {
+        // サーバー側の handleApiError のメッセージをそのまま表示
+        alert(data?.message ?? "削除に失敗しました");
         return;
       }
-      // 一覧を再取得
+      console.log(`削除しました（移動 ${data.movedProductsCount ?? 0} 件）`);
       router.refresh();
+    } catch {
+      alert("ネットワークエラーが発生しました");
     } finally {
       setLoading(false);
     }

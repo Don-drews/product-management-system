@@ -137,7 +137,7 @@ export async function updateCategory(
 export async function deleteCategoryReassigningProducts(
   categoryId: string
 ): Promise<{
-  movedProducts: number;
+  movedProductsCount: number;
   deletedCategory: CategoryListItem;
 }> {
   const category = await prisma.category.findUnique({
@@ -167,7 +167,7 @@ export async function deleteCategoryReassigningProducts(
   });
 
   return {
-    movedProducts: productCount,
+    movedProductsCount: productCount,
     deletedCategory: category,
   };
 }

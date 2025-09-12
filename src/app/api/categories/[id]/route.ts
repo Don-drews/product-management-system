@@ -41,7 +41,7 @@ export async function DELETE(_req: Request, ctx: { params: Params }) {
     return NextResponse.json(
       {
         message: "カテゴリを削除しました。関連商品は未分類へ移動しました。",
-        movedProducts: result.movedProducts,
+        movedProducts: result.movedProductsCount,
         deletedCategory: result.deletedCategory,
       },
       { status: 200 }
