@@ -21,14 +21,11 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: Request, { params }: { params: Params }) {
   try {
     const body = await req.json(); // ← 一度だけ読む
     const input = UpdateCategorySchema.parse(body);
-    const item = await updateCategory(params.id, input);
+    const item = await updateCategory((await params).id, input);
     return NextResponse.json({ item }, { status: 200 });
   } catch (e: unknown) {
     const { status, message } = handleApiError(e);

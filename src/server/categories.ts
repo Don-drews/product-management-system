@@ -4,7 +4,6 @@ import {
   CategoryDTO,
   CategoryListItem,
   CategoryListItemSchema,
-  CategorySchema,
   CreateCategoryInput,
   CreateCategorySchema,
   UpdateCategoryInput,
@@ -39,13 +38,13 @@ export async function listCategories(q?: string): Promise<CategoryListItem[]> {
 
 export async function createCategory(
   input: CreateCategoryInput
-): Promise<CategoryDTO> {
+): Promise<CategoryListItem> {
   const parsed = CreateCategorySchema.parse(input);
   const created = await prisma.category.create({
     data: parsed,
     select: { id: true, name: true, slug: true },
   });
-  return CategorySchema.parse(created);
+  return CategoryListItemSchema.parse(created);
 }
 
 export async function updateCategory(
@@ -62,7 +61,7 @@ export async function updateCategory(
     })
     .catch(() => null);
 
-  return updated ? CategorySchema.parse(updated) : null;
+  return updated ? toCategoryDTO(updated) : null;
 }
 
 export async function deleteCategory(id: string): Promise<void> {
