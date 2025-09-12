@@ -20,7 +20,12 @@ export function isDefaultCategorySlug(slug: string) {
   return slug === DEFAULT_CATEGORY_SLUG;
 }
 
-export async function getOrCreateUncategorized() {
+/**
+ * “未分類”カテゴリを必ず1件だけ用意して返す（存在しなければ作成）
+ * - 同時実行でも安全（upsert）
+ * - 返却は最小フィールドに限定
+ */
+export async function getOrCreateUncategorized(): Promise<CategoryListItem> {
   return prisma.category.upsert({
     where: { slug: DEFAULT_CATEGORY_SLUG },
     update: {},
