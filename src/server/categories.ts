@@ -129,16 +129,45 @@ export async function updateCategory(
   return updated;
 }
 
-export async function deleteCategory(id: string): Promise<void> {
-  // 参照チェック。参照があれば 409 にしたいのでここで弾く
-  console.log(`----------------- deleteCategory() -----------------`);
-
-  const usedCount = await prisma.product.count({ where: { categoryId: id } });
-  console.log(`useCount:${usedCount}`);
-
-  if (usedCount > 0) {
-    // 共通ハンドラで 409 にマッピングされる想定
-    throw new Error("Category is in use");
+/**
+ * カテゴリ削除（関連商品は “未分類” へ付け替えてから削除）
+ * - “未分類” 自体は削除禁止（ガード）
+ * - 付け替え + 削除はトランザクションで整合性を担保
+ */
+export async function deleteCategoryReassigningProducts(
+  categoryId: string
+): Promise<{
+  movedProducts: number;
+  deletedCategory: CategoryListItem;
+}> {
+  const category = await prisma.category.findUnique({
+    where: { id: categoryId },
+    select: { id: true, name: true, slug: true },
+  });
+  if (!category) throw new NotFoundError("Category not found");
+  if (isDefaultCategorySlug(category.slug)) {
+    throw new ForbiddenError("‘未分類’カテゴリは削除できません");
   }
-  await prisma.category.delete({ where: { id } });
+
+  const uncategorized = await getOrCreateUncategorized();
+
+  const productCount = await prisma.product.count({
+    where: { categoryId: category.id },
+  });
+
+  await prisma.$transaction(async (tx) => {
+    console.log(`=== トランザクション処理に入ります ===`);
+    console.log(`=== 関連商品を"未分類"へ移します ===`);
+    await tx.product.updateMany({
+      where: { categoryId: category.id },
+      data: { categoryId: uncategorized.id },
+    });
+    console.log(`=== カテゴリを削除します ===`);
+    await tx.category.delete({ where: { id: category.id } });
+  });
+
+  return {
+    movedProducts: productCount,
+    deletedCategory: category,
+  };
 }

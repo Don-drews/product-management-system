@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { handleApiError } from "@/lib/errors/api-error";
 import { UpdateCategorySchema } from "@/schemas/category";
 import {
-  deleteCategory,
+  deleteCategoryReassigningProducts,
   getCategoryById,
   updateCategory,
 } from "@/server/categories";
@@ -43,7 +43,7 @@ export async function DELETE(_req: Request, ctx: { params: Params }) {
 
     if (!cat)
       return NextResponse.json({ message: "Not Found." }, { status: 404 });
-    await deleteCategory((await ctx.params).id);
+    await deleteCategoryReassigningProducts((await ctx.params).id);
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (e: unknown) {
     console.log(`-!- errorCatch -!-`);
