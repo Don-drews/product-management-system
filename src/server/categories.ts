@@ -1,3 +1,4 @@
+import { DEFAULT_CATEGORY_SLUG } from "@/constants/category";
 import { toCategoryDTO } from "@/lib/mapper/category";
 import { prisma } from "@/lib/prisma";
 import {
@@ -8,6 +9,13 @@ import {
   CreateCategorySchema,
   UpdateCategoryInput,
 } from "@/schemas/category";
+
+/**
+ * カテゴリ名が“未分類”かどうか
+ */
+export function isDefaultCategorySlug(slug: string) {
+  return slug === DEFAULT_CATEGORY_SLUG;
+}
 
 export async function getCategoryById(id: string): Promise<CategoryDTO | null> {
   const row = await prisma.category.findUnique({
