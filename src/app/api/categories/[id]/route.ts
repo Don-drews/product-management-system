@@ -1,4 +1,3 @@
-// app/api/categories/[id]/route.ts
 import { NextResponse } from "next/server";
 import { handleApiError } from "@/lib/errors/api-error";
 import { UpdateCategorySchema } from "@/schemas/category";
@@ -37,17 +36,18 @@ export async function PUT(req: Request, { params }: { params: Params }) {
 
 export async function DELETE(_req: Request, ctx: { params: Params }) {
   try {
-    console.log(`=== next, cat ===`);
-    const cat = await getCategoryById((await ctx.params).id);
-    console.log(`=== cat ===\n${cat}`);
-
-    if (!cat)
-      return NextResponse.json({ message: "Not Found." }, { status: 404 });
-    await deleteCategoryReassigningProducts((await ctx.params).id);
-    return NextResponse.json({ ok: true }, { status: 200 });
+    const { id } = await ctx.params;
+    const result = await deleteCategoryReassigningProducts(id);
+    return NextResponse.json(
+      {
+        message: "カテゴリを削除しました。関連商品は未分類へ移動しました。",
+        movedProducts: result.movedProducts,
+        deletedCategory: result.deletedCategory,
+      },
+      { status: 200 }
+    );
   } catch (e: unknown) {
-    console.log(`-!- errorCatch -!-`);
-    console.error("❌ deleteCategory failed\n", e);
+    console.error("❌ deleteCategory failed.\n", e);
     const { status, message } = handleApiError(e);
     console.log(`status: ${status}\nerror message: ${message}`);
 
