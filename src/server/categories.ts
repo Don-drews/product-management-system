@@ -1,4 +1,7 @@
-import { DEFAULT_CATEGORY_SLUG } from "@/constants/category";
+import {
+  DEFAULT_CATEGORY_NAME,
+  DEFAULT_CATEGORY_SLUG,
+} from "@/constants/category";
 import { toCategoryDTO } from "@/lib/mapper/category";
 import { prisma } from "@/lib/prisma";
 import {
@@ -15,6 +18,15 @@ import {
  */
 export function isDefaultCategorySlug(slug: string) {
   return slug === DEFAULT_CATEGORY_SLUG;
+}
+
+export async function getOrCreateUncategorized() {
+  return prisma.category.upsert({
+    where: { slug: DEFAULT_CATEGORY_SLUG },
+    update: {},
+    create: { name: DEFAULT_CATEGORY_NAME, slug: DEFAULT_CATEGORY_SLUG },
+    select: { id: true, name: true, slug: true },
+  });
 }
 
 export async function getCategoryById(id: string): Promise<CategoryDTO | null> {
