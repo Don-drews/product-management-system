@@ -42,7 +42,7 @@ export default function DeleteCategoryButton({
         alert(data?.message ?? "削除に失敗しました");
         return;
       }
-      console.log(`削除しました（移動 ${data.movedProductsCount ?? 0} 件）`);
+      // console.log(`削除しました（移動 ${data.movedProductsCount ?? 0} 件）`);
       router.refresh();
     } catch {
       alert("ネットワークエラーが発生しました");
