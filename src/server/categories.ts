@@ -34,6 +34,7 @@ export async function getOrCreateUncategorized(): Promise<CategoryListItem> {
   });
 }
 
+/** id 指定でカテゴリを1件取得（なければ null） */
 export async function getCategoryById(id: string): Promise<CategoryDTO | null> {
   const row = await prisma.category.findUnique({
     where: { id },
