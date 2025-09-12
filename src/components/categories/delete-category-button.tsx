@@ -66,7 +66,9 @@ export default function DeleteCategoryButton({
         <AlertDialogHeader>
           <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
           <AlertDialogDescription>
-            この操作は取り消せません。カテゴリに紐づく商品がある場合は「未分類」に変更になります。
+            この操作は取り消せません。
+            <br />
+            カテゴリに紐づく商品がある場合は「未分類」に変更になります。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
