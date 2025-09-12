@@ -7,8 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
   UpdateCategorySchema,
-  type UpdateCategoryInput,
-  type CategoryDTO,
+  UpdateCategoryInput,
   CategoryListItem,
 } from "@/schemas/category";
 
