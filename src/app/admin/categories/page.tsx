@@ -53,6 +53,8 @@ export default async function AdminCategoriesPage({
                   <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
                   <td className="px-4 py-3">
                     <EditCategoryDialog category={c} />
+                  </td>
+                  <td className="py-3">
                     <DeleteCategoryButton id={c.id} />
                   </td>
                 </tr>
