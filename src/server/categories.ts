@@ -12,6 +12,7 @@ import {
   CreateCategorySchema,
   UpdateCategoryInput,
 } from "@/schemas/category";
+import { Prisma } from "@prisma/client";
 
 export class NotFoundError extends Error {
   status = 404 as const;
@@ -83,21 +84,49 @@ export async function createCategory(
   return CategoryListItemSchema.parse(created);
 }
 
+/**
+ * カテゴリ更新
+ * - “未分類”は名称・slug ともに変更不可（ガード）
+ * - 入力は API 層で Zod 済み想定（name/slug は任意）
+ */
 export async function updateCategory(
   id: string,
   input: UpdateCategoryInput
-): Promise<CategoryDTO | null> {
-  const updated = await prisma.category
-    .update({
-      where: { id },
-      data: {
-        name: input.name,
-        slug: input.slug,
-      },
-    })
-    .catch(() => null);
+): Promise<CategoryListItem> {
+  const current = await prisma.category.findUnique({
+    where: { id },
+    select: { id: true, name: true, slug: true },
+  });
+  if (!current) throw new NotFoundError("Category not found");
 
-  return updated ? toCategoryDTO(updated) : null;
+  if (isDefaultCategorySlug(current.slug)) {
+    // “未分類”は改名不可
+    console.log(`=========== updateCategory() ===========`);
+    console.log(`= "未分類"の編集は許可されていません。 =`);
+    console.log(`========================================`);
+
+    if (
+      typeof input.name !== "undefined" ||
+      typeof input.slug !== "undefined"
+    ) {
+      throw new ForbiddenError(
+        "‘未分類’カテゴリは名称・slugの変更ができません"
+      );
+    }
+    // 既存のまま返す
+    return current;
+  }
+
+  const data: Prisma.CategoryUpdateInput = {};
+  if (typeof input.name !== "undefined") data.name = input.name;
+  if (typeof input.slug !== "undefined") data.slug = input.slug;
+
+  const updated = await prisma.category.update({
+    where: { id },
+    data,
+    select: { id: true, name: true, slug: true },
+  });
+  return updated;
 }
 
 export async function deleteCategory(id: string): Promise<void> {
