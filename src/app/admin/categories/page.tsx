@@ -3,6 +3,7 @@ import { listCategories } from "@/server/categories";
 import SearchBox from "./search-box";
 import EditCategoryDialog from "@/components/categories/edit-category-dialog";
 import DeleteCategoryButton from "@/components/categories/delete-category-button";
+import { DEFAULT_CATEGORY_SLUG } from "@/constants/category";
 
 export const metadata = { title: "カテゴリ一覧 | Admin" };
 
@@ -43,22 +44,28 @@ export default async function AdminCategoriesPage({
               <tr>
                 <th className="px-4 py-3 font-medium">名前</th>
                 <th className="px-4 py-3 font-medium">スラッグ</th>
-                <th className="px-4 py-3 font-medium w-32">操作</th>
+                <th className="px-4 py-3 font-medium w-32">更新</th>
+                <th className="px-4 py-3 font-medium w-32">削除</th>
               </tr>
             </thead>
             <tbody>
-              {items.map((c) => (
-                <tr key={c.id} className="border-t">
-                  <td className="px-4 py-3">{c.name}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
-                  <td className="px-4 py-3">
-                    <EditCategoryDialog category={c} />
-                  </td>
-                  <td className="py-3">
-                    <DeleteCategoryButton id={c.id} />
-                  </td>
-                </tr>
-              ))}
+              {items.map((c) => {
+                const isDefault = c.slug === DEFAULT_CATEGORY_SLUG;
+                return (
+                  <tr key={c.id} className="border-t">
+                    <td className="px-4 py-3">{c.name}</td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {c.slug}
+                    </td>
+                    <td className="px-4 py-3">
+                      <EditCategoryDialog category={c} disabled={isDefault} />
+                    </td>
+                    <td className="px-4 py-3">
+                      <DeleteCategoryButton id={c.id} disabled={isDefault} />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

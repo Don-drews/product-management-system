@@ -37,8 +37,10 @@ function pickDirty<T extends Record<string, unknown>>(
 
 export default function EditCategoryDialog({
   category,
+  disabled = false,
 }: {
   category: CategoryListItem;
+  disabled: boolean;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -81,7 +83,12 @@ export default function EditCategoryDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="link" className="px-0 h-auto">
+        <Button
+          variant="link"
+          className="px-0 h-auto"
+          disabled={disabled}
+          title={disabled ? "未分類は編集できません" : "編集"}
+        >
           編集
         </Button>
       </DialogTrigger>

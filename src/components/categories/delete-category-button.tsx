@@ -15,7 +15,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
-export default function DeleteCategoryButton({ id }: { id: string }) {
+export default function DeleteCategoryButton({
+  id,
+  disabled,
+}: {
+  id: string;
+  disabled: boolean;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +52,12 @@ export default function DeleteCategoryButton({ id }: { id: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="sm" disabled={loading}>
+        <Button
+          variant="destructive"
+          size="sm"
+          disabled={loading || disabled}
+          title={disabled ? "未分類は削除できません" : "削除"}
+        >
           {loading ? "削除中…" : "削除"}
         </Button>
       </AlertDialogTrigger>
