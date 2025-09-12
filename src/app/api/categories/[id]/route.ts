@@ -36,15 +36,24 @@ export async function PUT(
   }
 }
 
-export async function DELETE(_req: Request, ctx: { params: { id: string } }) {
+type Params = Promise<{ id: string }>;
+
+export async function DELETE(_req: Request, ctx: { params: Params }) {
   try {
-    const cat = await getCategoryById(ctx.params.id);
+    console.log(`=== next, cat ===`);
+    const cat = await getCategoryById((await ctx.params).id);
+    console.log(`=== cat ===\n${cat}`);
+
     if (!cat)
-      return NextResponse.json({ message: "Not Found" }, { status: 404 });
-    await deleteCategory(ctx.params.id);
+      return NextResponse.json({ message: "Not Found." }, { status: 404 });
+    await deleteCategory((await ctx.params).id);
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (e: unknown) {
+    console.log(`-!- errorCatch -!-`);
+    console.error("❌ deleteCategory failed\n", e);
     const { status, message } = handleApiError(e);
+    console.log(`status: ${status}\nerror message: ${message}`);
+
     return NextResponse.json({ message }, { status });
   }
 }
