@@ -1,7 +1,7 @@
-import type { NextAuthConfig } from "next-auth";
+import NextAuth, { type NextAuthOptions } from "next-auth";
 import Email from "next-auth/providers/email";
 
-export const authConfig = {
+export const authOptions: NextAuthOptions = {
   providers: [
     Email({
       server: process.env.EMAIL_SERVER,
@@ -9,4 +9,9 @@ export const authConfig = {
       maxAge: 60 * 60, // リンク有効期限(秒) 1時間
     }),
   ],
-} satisfies NextAuthConfig;
+  pages: {
+    signIn: "/auth/signin",
+  },
+} satisfies NextAuthOptions;
+
+export default NextAuth(authOptions);
