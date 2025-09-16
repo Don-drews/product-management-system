@@ -12,8 +12,10 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
+
+const COOLDOWN_MS = 30_000; // 30秒
 
 export default function VerifyRequestPage() {
   const sp = useSearchParams();
@@ -33,15 +35,68 @@ export default function VerifyRequestPage() {
 
   const [isPending, startTransition] = useTransition();
   const [msg, setMsg] = useState<string | null>(null);
+
+  // ② クールダウン残り時間（ms）
+  const [remainingMs, setRemainingMs] = useState(0);
+  const timerRef = useRef<number | null>(null);
+  const keyFor = (addr: string) => `resendCooldown:${addr}`;
+
+  // 残り時間の更新を開始/停止
+  const startCooldownTimer = (lastSentAt: number) => {
+    // 直ちに残りを反映
+    const update = () => {
+      const remain = Math.max(0, COOLDOWN_MS - (Date.now() - lastSentAt));
+      setRemainingMs(remain);
+      if (remain <= 0 && timerRef.current) {
+        window.clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+    update();
+    if (!timerRef.current) {
+      timerRef.current = window.setInterval(update, 250) as unknown as number; // 0.25秒刻み
+    }
+  };
+
+  // ③ 初期ロード：保存された最終送信時刻があればカウントダウン開始
+  useEffect(() => {
+    if (!email) return;
+    try {
+      const raw = localStorage.getItem(keyFor(email));
+      const last = raw ? Number(raw) : 0;
+      if (last && Date.now() - last < COOLDOWN_MS) {
+        startCooldownTimer(last);
+      } else {
+        setRemainingMs(0);
+      }
+    } catch {
+      setRemainingMs(0);
+    }
+    return () => {
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [email]);
+
   const canResend = useMemo(() => !!email, [email]);
+  const remainingSec = Math.ceil(remainingMs / 1000);
 
   const handleResend = () => {
     if (!email) return;
+    if (remainingMs > 0) return; // クールダウン中は弾く
     setMsg(null);
+
     startTransition(async () => {
-      // ② 再送（再びメール送るだけ。画面はこのまま）
       await signIn("email", { email, callbackUrl, redirect: false });
       setMsg("確認メールを再送しました。受信トレイをご確認ください。");
+      // 送信時刻を保存し、カウントダウン開始
+      try {
+        const now = Date.now();
+        localStorage.setItem(keyFor(email), String(now));
+        startCooldownTimer(now);
+      } catch {}
     });
   };
 
@@ -106,6 +161,11 @@ export default function VerifyRequestPage() {
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   再送中…
+                </>
+              ) : remainingMs > 0 ? (
+                <>
+                  <RefreshCcw className="mr-2 h-4 w-4 opacity-60" />
+                  {remainingSec} 秒後に再送可能
                 </>
               ) : (
                 <>
