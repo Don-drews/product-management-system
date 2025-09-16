@@ -33,12 +33,33 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  likes       Like[]
+
   @@index([categoryId])
 }
 
 enum Role {
   USER
   ADMIN
+}
+
+model Like {
+  id         String   @id @default(uuid())
+  productId  String
+  userId     String
+  createdAt  DateTime @default(now())
+
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 重複いいね防止 & 「自分のいいね状態の一括取得」を最適化
+  @@unique([userId, productId])
+
+  // 人気（直近7日）集計用
+  @@index([productId, createdAt(sort: Desc)])
+
+  // 物理テーブル名は likes に（SQL予約語 LIKE を避けるため）
+  @@map("likes")
 }
 
 model User {
@@ -50,6 +71,8 @@ model User {
   role          Role     @default(USER)
 
   accounts      Account[]
+
+  likes       Like[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
