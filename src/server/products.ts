@@ -109,7 +109,7 @@ export async function getNewArrivals(limit = 12): Promise<ProductCardData[]> {
  * - likeCount は直近7日の数
  */
 export async function getPopularIn7Days(limit = 8): Promise<ProductCardData[]> {
-  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // 今の時間から 7日分を引いて「7日前の日時」を since として保存
 
   const grouped = await prisma.like.groupBy({
     by: ["productId"],
