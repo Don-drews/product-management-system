@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { Mail } from "lucide-react";
@@ -19,6 +19,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 export default function SignInPage() {
+  const router = useRouter();
   const sp = useSearchParams();
   const callbackUrl = sp.get("callbackUrl") ?? "/";
   const error = sp.get("error"); // Auth.jsからのエラー文言（必要ならマッピングして表示）
@@ -26,22 +27,38 @@ export default function SignInPage() {
   const [isPending, startTransition] = useTransition();
   const [localError, setLocalError] = useState<string | null>(null);
 
+  const errorMessages: Record<string, string> = {
+    OAuthAccountNotLinked: "同じメールで登録済みのアカウントがあります。",
+    EmailSignin: "メール送信に失敗しました。入力を確認してください。",
+  };
+
+  const errorMessage = error
+    ? errorMessages[error] ?? "サインインでエラーが発生しました"
+    : null;
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError(null);
 
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+    const value = email.trim();
+    if (!value || !/^\S+@\S+\.\S+$/.test(value)) {
       setLocalError("正しいメールアドレスを入力してください。");
       return;
     }
 
     startTransition(async () => {
-      await signIn("email", {
-        email,
-        callbackUrl,
-      });
-      // NOTE: email プロバイダは基本的に専用画面に遷移（メール送信）→Magic Linkから復帰
-      // ここでは redirect: true （デフォルト）の挙動に任せる
+      // ① メール送信（リダイレクト抑止）
+      await signIn("email", { email: value, callbackUrl, redirect: false });
+      // ② localStorageにも保存（万一の復元用）
+      try {
+        localStorage.setItem("lastSignInEmail", value);
+      } catch {}
+      // ③ 自前で verify ページへ遷移（クエリでメールとcallbackUrlを渡す）
+      router.push(
+        `/auth/verify-request?email=${encodeURIComponent(
+          value
+        )}&callbackUrl=${encodeURIComponent(callbackUrl)}`
+      );
     });
   };
 
@@ -72,9 +89,9 @@ export default function SignInPage() {
         </CardHeader>
 
         <CardContent>
-          {error && (
+          {errorMessage && (
             <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-900/20">
-              サインインでエラーが発生しました（{error}）
+              {errorMessage}
             </div>
           )}
           {localError && (
@@ -93,6 +110,9 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
+                inputMode="email"
+                autoCapitalize="none"
+                spellCheck={false}
                 required
               />
             </div>
