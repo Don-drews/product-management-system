@@ -1,4 +1,13 @@
 import Link from "next/link";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type Props = { searchParams?: { error?: string } };
 
@@ -26,28 +35,31 @@ export default function ErrorPage({ searchParams }: Props) {
   const message = getMessage(code);
 
   return (
-    <main className="mx-auto max-w-md px-6 py-12">
-      <h1 className="text-2xl font-semibold">サインインエラー</h1>
-      <p className="mt-4 text-sm text-muted-foreground">
-        {message}
-        {code ? `（コード: ${code}）` : null}
-      </p>
-
-      <div className="mt-8 flex gap-3">
-        <Link
-          href="/auth/signin"
-          className="rounded-xl border px-4 py-2 text-sm"
-        >
-          サインインへ戻る
-        </Link>
-        <Link href="/" className="rounded-xl border px-4 py-2 text-sm">
-          トップへ
-        </Link>
+    <div className="relative min-h-[calc(100dvh-56px)] w-full overflow-hidden">
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-40 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-gradient-to-br from-indigo-600/30 via-fuchsia-500/20 to-cyan-400/20 blur-3xl" />
+        <div className="absolute bottom-[-200px] right-[-200px] h-[500px] w-[500px] rounded-full bg-gradient-to-tr from-purple-500/20 to-blue-500/20 blur-3xl" />
       </div>
 
-      <p className="mt-6 text-xs text-muted-foreground">
-        問題が解決しない場合は管理者にお問い合わせください。
-      </p>
-    </main>
+      <main className="mx-auto flex w-full max-w-xl px-6 py-16">
+        <Card className="w-full border-white/10 bg-background/70 backdrop-blur">
+          <CardHeader>
+            <CardTitle>サインインエラー</CardTitle>
+            <CardDescription>
+              {message} {code ? <span>（コード: {code}）</span> : null}
+            </CardDescription>
+          </CardHeader>
+          <CardContent />
+          <CardFooter className="gap-3">
+            <Button asChild variant="outline">
+              <Link href="/auth/signin">サインインへ戻る</Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href="/">トップへ</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      </main>
+    </div>
   );
 }
