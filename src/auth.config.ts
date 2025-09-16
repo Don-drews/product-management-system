@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
     verifyRequest: "/auth/verify-request", // verifyRequest: 「確認メールを送ったよ」画面を自作したいときに指定
-    // error: "/auth/error", // 必要なら
+    error: "/auth/error",
   },
 
   callbacks: {
