@@ -119,7 +119,7 @@ export async function getPopularIn7Days(limit = 8): Promise<ProductCardData[]> {
     take: limit,
   });
 
-  if (grouped.length === 0) return [];
+  if (grouped.length === 0) return []; // もし直近7日間に1件もいいねがなかった場合は、余計な処理をせずに空配列を返す
 
   const ids = grouped.map((g) => g.productId);
 
