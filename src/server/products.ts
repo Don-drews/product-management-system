@@ -5,6 +5,7 @@ import type {
   ProductDTO,
   UpdateProductInput,
 } from "@/schemas/product";
+import { ProductCardData } from "@/types/product";
 
 export async function getProductById(id: string): Promise<ProductDTO | null> {
   const productRecord = await prisma.product.findUnique({
@@ -73,4 +74,80 @@ export async function deleteProduct(id: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+/**
+ * 新着（createdAt desc, limit=12）
+ * - likeCount は累計（Product.likes の総数）
+ */
+export async function getNewArrivals(limit = 12): Promise<ProductCardData[]> {
+  const rows = await prisma.product.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      imageUrl: true,
+      createdAt: true,
+      _count: { select: { likes: true } },
+    },
+  });
+
+  return rows.map((p) => ({
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    imageUrl: p.imageUrl,
+    createdAt: p.createdAt,
+    likeCount: p._count.likes,
+  }));
+}
+
+/**
+ * 人気（直近7日いいね数 desc, limit=8）
+ * - likeCount は直近7日の数
+ */
+export async function getPopularIn7Days(limit = 8): Promise<ProductCardData[]> {
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  const grouped = await prisma.like.groupBy({
+    by: ["productId"],
+    where: { createdAt: { gte: since } },
+    _count: { productId: true },
+    orderBy: { _count: { productId: "desc" } },
+    take: limit,
+  });
+
+  if (grouped.length === 0) return [];
+
+  const ids = grouped.map((g) => g.productId);
+
+  const products = await prisma.product.findMany({
+    where: { id: { in: ids } },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      imageUrl: true,
+      createdAt: true,
+    },
+  });
+
+  const countMap = new Map(
+    grouped.map((g) => [g.productId, g._count.productId])
+  );
+  const orderMap = new Map(ids.map((id, idx) => [id, idx]));
+
+  const merged: ProductCardData[] = products.map((p) => ({
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    imageUrl: p.imageUrl,
+    createdAt: p.createdAt,
+    likeCount: countMap.get(p.id) ?? 0,
+  }));
+
+  merged.sort((a, b) => orderMap.get(a.id)! - orderMap.get(b.id)!);
+  return merged;
 }
