@@ -17,6 +17,11 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
+  pages: {
+    verifyRequest: "/auth/verify-request",
+    // error: "/auth/error", // 必要なら
+  },
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
