@@ -1,7 +1,6 @@
 import { withAuth } from "next-auth/middleware";
 
 export default withAuth({
-  // pages を書かなければデフォルトで /api/auth/signin にリダイレクト
   callbacks: {
     authorized: ({ token, req }) => {
       const { pathname } = req.nextUrl;
@@ -17,8 +16,8 @@ export default withAuth({
       return true;
     },
   },
-  // いまは自作ページが無いので省略（= /api/auth/signin に飛ぶ）
-  // pages: { signIn: "/auth/signin" },
+  // pages を書かなければデフォルトで /api/auth/signin にリダイレクト
+  pages: { signIn: "/auth/signin" },
 });
 
 export const config = {
