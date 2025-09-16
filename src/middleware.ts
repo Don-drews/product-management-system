@@ -14,6 +14,8 @@ export default withAuth({
 
       // それ以外（/dashboardなど）はログインさえしていればOK
       return true;
+
+      // ※ authorized の中で NextResponse.redirect() を返すと、ログイン済みでも別のページへ強制リダイレクトできる
     },
   },
   // pages を書かなければデフォルトで /api/auth/signin にリダイレクト
