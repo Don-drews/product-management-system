@@ -51,7 +51,7 @@ export default function RootLayout({
                 className="pointer-events-none absolute -right-24 -bottom-24 h-80 w-80 rounded-full blur-3xl opacity-20
                 bg-gradient-to-tr from-cyan-400 to-emerald-400 dark:from-cyan-600 dark:to-emerald-600"
               />
-              {children}
+              <div className="relative z-10">{children}</div>
             </main>
           </Providers>
           {/* 共通フッターを入れるならここ */}
