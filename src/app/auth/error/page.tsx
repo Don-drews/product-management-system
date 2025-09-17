@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 
-type Props = { searchParams?: { error?: string } };
+type SearchParams = { error?: string };
 
 const messages: Record<string, string> = {
   Verification:
@@ -25,14 +25,15 @@ const messages: Record<string, string> = {
   Default: "エラーが発生しました。再度お試しください。",
 };
 
-function getMessage(code?: string) {
-  if (!code) return messages.Default;
-  return messages[code] ?? messages.Default;
-}
+export default async function ErrorPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const sp = await searchParams;
+  const code = sp.error;
 
-export default function ErrorPage({ searchParams }: Props) {
-  const code = searchParams?.error;
-  const message = getMessage(code);
+  const message = messages[code ?? "Default"] ?? messages.Default;
 
   return (
     <div className="relative min-h-[calc(100dvh-56px)] w-full overflow-hidden">
@@ -53,7 +54,7 @@ export default function ErrorPage({ searchParams }: Props) {
 
           <CardContent>
             <p className="text-sm text-muted-foreground text-center">
-              {message} {code ? <span>（コード: {code}）</span> : null}
+              {message} <br /> {code ? <span>（コード: {code}）</span> : null}
             </p>
           </CardContent>
 
