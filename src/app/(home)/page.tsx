@@ -26,7 +26,7 @@ export default function HomePage() {
                 [background:radial-gradient(40rem_30rem_at_80%_-10%,theme(colors.primary/20),transparent_60%),
                 radial-gradient(30rem_24rem_at_0%_100%,theme(colors.secondary/15),transparent_60%)]
                 dark:[background:radial-gradient(40rem_30rem_at_80%_-10%,theme(colors.primary/25),transparent_60%),
-                              radial-gradient(30rem_24rem_at_0%_100%,theme(colors.secondary/20),transparent_60%)]
+                radial-gradient(30rem_24rem_at_0%_100%,theme(colors.secondary/20),transparent_60%)]
               "
             />
 
