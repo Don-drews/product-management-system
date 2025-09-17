@@ -40,7 +40,6 @@ export default function RootLayout({
           defaultTheme="system" // "system" → OS設定を初期値にする、"light" → ライトモードが初期値になる
           enableSystem
         >
-          {/* ここに共通ヘッダーを今後配置予定 */}
           <Providers>
             <Header />
             <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
