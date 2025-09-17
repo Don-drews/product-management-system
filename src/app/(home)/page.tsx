@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import NewArrivalsSection from "@/components/top/sections/new-arrivals";
+import PopularSection from "@/components/top/sections/popular";
 
 export default function HomePage() {
   return (
@@ -28,7 +30,6 @@ export default function HomePage() {
               "
             />
 
-            {/* 中央寄せ（md以上で左寄せ） */}
             <div className="text-center md:text-left">
               <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs text-muted-foreground mb-5 bg-background/60">
                 サインインで「いいね」を保存できます
@@ -57,6 +58,11 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <div className="space-y-12 md:space-y-16">
+        <NewArrivalsSection />
+        <PopularSection />
+      </div>
     </main>
   );
 }
