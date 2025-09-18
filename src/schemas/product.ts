@@ -14,6 +14,7 @@ export const ProductSchema = z.object({
   categoryName: z.string(),
   createdAt: z.string(), // API返却はISO文字列に統一
   updatedAt: z.string(), // API返却はISO文字列に統一
+  isLiked: z.boolean().optional(),
 });
 
 // 商品作成用
