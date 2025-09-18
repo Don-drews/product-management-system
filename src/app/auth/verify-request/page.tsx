@@ -105,16 +105,6 @@ export default function VerifyRequestPage() {
       className="min-h-screen relative flex items-center justify-center overflow-hidden
       bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950"
     >
-      {/* 背景ブロブ（サインインと合わせた雰囲気） */}
-      <div
-        className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full blur-3xl opacity-30
-        bg-gradient-to-tr from-indigo-400 to-fuchsia-400 dark:from-indigo-600 dark:to-fuchsia-600"
-      />
-      <div
-        className="pointer-events-none absolute -right-24 -bottom-24 h-80 w-80 rounded-full blur-3xl opacity-20
-        bg-gradient-to-tr from-cyan-400 to-emerald-400 dark:from-cyan-600 dark:to-emerald-600"
-      />
-
       <Card
         className="w-full max-w-md backdrop-blur supports-[backdrop-filter]:bg-white/70
         dark:supports-[backdrop-filter]:bg-slate-900/60 border border-white/40 dark:border-white/10"

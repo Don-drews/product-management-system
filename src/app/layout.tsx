@@ -40,11 +40,18 @@ export default function RootLayout({
           defaultTheme="system" // "system" → OS設定を初期値にする、"light" → ライトモードが初期値になる
           enableSystem
         >
-          {/* ここに共通ヘッダーを今後配置予定 */}
           <Providers>
             <Header />
             <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              {children}
+              <div
+                className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full blur-3xl opacity-30
+                bg-gradient-to-tr from-indigo-400 to-fuchsia-400 dark:from-indigo-600 dark:to-fuchsia-600"
+              />
+              <div
+                className="pointer-events-none absolute -right-24 -bottom-24 h-80 w-80 rounded-full blur-3xl opacity-20
+                bg-gradient-to-tr from-cyan-400 to-emerald-400 dark:from-cyan-600 dark:to-emerald-600"
+              />
+              <div className="relative z-10">{children}</div>
             </main>
           </Providers>
           {/* 共通フッターを入れるならここ */}
