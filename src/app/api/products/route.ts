@@ -1,13 +1,29 @@
 import { NextResponse } from "next/server";
 import { createProduct, listProducts } from "@/server/products";
 import { CreateProductSchema } from "@/schemas/product";
+import { auth } from "@/auth";
+import { getMyLikedSet } from "@/server/likes";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q") ?? undefined;
 
+  const session = await auth();
+
   const items = await listProducts(q);
-  return NextResponse.json({ items });
+  let likedSet = new Set<string>();
+  if (session?.user && items.length > 0) {
+    likedSet = await getMyLikedSet(
+      session.user.id,
+      items.map((i) => i.id)
+    );
+  }
+
+  const itemsWithIsLiked = session?.user
+    ? items.map((p) => ({ ...p, isLiked: likedSet.has(p.id) }))
+    : items;
+
+  return NextResponse.json({ items: itemsWithIsLiked });
 }
 
 export async function POST(req: Request) {
