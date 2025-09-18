@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { toggleLike } from "@/server/likes";
-// Auth.js v5 のユーティリティ（あなたのプロジェクトに合わせて import パス調整）
 import { auth } from "@/auth";
 
 const BodySchema = z.object({
