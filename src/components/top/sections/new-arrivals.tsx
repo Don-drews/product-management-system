@@ -4,7 +4,7 @@ import { getMyLikedSet } from "@/server/likes";
 import { getNewArrivals } from "@/server/products";
 
 export default async function NewArrivalsSection() {
-  const items = await getNewArrivals(6);
+  const items = await getNewArrivals(8);
 
   const session = await auth();
   let likedSet = new Set<string>();
