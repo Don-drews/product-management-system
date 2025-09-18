@@ -43,7 +43,7 @@ export default function ProductCard({ product }: Props) {
         <LikeToggle
           productId={product.id}
           initialCount={product.likeCount}
-          // initialIsLiked は後で一括取得を入れる
+          initialIsLiked={product.isLiked}
         />
       </div>
 
