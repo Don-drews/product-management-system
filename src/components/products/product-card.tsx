@@ -47,7 +47,6 @@ export default function ProductCard({ product }: Props) {
         />
       </div>
 
-      {/* 角の軽い装飾（任意） */}
       <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-transparent group-hover:ring-primary/20" />
     </div>
   );
