@@ -1,9 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Heart } from "lucide-react";
 import { ProductDTO } from "@/schemas/product";
+import { LikeToggle } from "./products/like-toggle";
 
 function formatJPY(n: number) {
   return new Intl.NumberFormat("ja-JP").format(n);
@@ -11,14 +10,11 @@ function formatJPY(n: number) {
 
 type Props = {
   product: ProductDTO;
-  liked: boolean;
-  onToggleLike: () => void;
 };
 
-export default function ProductCard({ product, liked, onToggleLike }: Props) {
+export default function ProductCard({ product }: Props) {
   // 画像が無いときのフォールバック
   const img = product.imageUrl || "/placeholder/no-image.png";
-  console.log(`product:${product.categoryName}`);
 
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-md">
@@ -60,17 +56,11 @@ export default function ProductCard({ product, liked, onToggleLike }: Props) {
           ¥{formatJPY(product.price)}
         </span>
 
-        <Button
-          variant={liked ? "default" : "outline"}
-          size="sm"
-          onClick={onToggleLike}
-          aria-pressed={liked}
-          aria-label={liked ? "いいね解除" : "いいね"}
-          className="gap-1 h-9"
-        >
-          <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
-          <span className="hidden sm:inline">{liked ? "Liked" : "Like"}</span>
-        </Button>
+        <LikeToggle
+          productId={product.id}
+          initialCount={product.likeCount ?? 0}
+          initialIsLiked={product.isLiked}
+        />
       </CardContent>
     </Card>
   );

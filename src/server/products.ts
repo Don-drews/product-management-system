@@ -24,9 +24,16 @@ export async function listProducts(query?: string): Promise<ProductDTO[]> {
   const rows = await prisma.product.findMany({
     where,
     orderBy: { createdAt: "desc" },
-    include: { category: { select: { name: true } } },
+    include: {
+      category: { select: { name: true } },
+      _count: { select: { likes: true } },
+    },
   });
-  return rows.map((product) => toProductDTO(product as ProductWithCategory));
+  return rows.map((product) =>
+    toProductDTO(product as ProductWithCategory, {
+      likeCount: product._count.likes,
+    })
+  );
 }
 
 export async function createProduct(

@@ -17,32 +17,8 @@ export default function ProductsPage() {
   const [query, setQuery] = useState(qInUrl);
   const debounced = useDebounce(query, 300);
 
-  const [liked, setLiked] = useState<Record<string, boolean>>({});
-
   const [items, setItems] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const toggleLike = async (id: string) => {
-    const prev = !!liked[id];
-
-    // 楽観更新
-    setLiked((s) => ({ ...s, [id]: !prev }));
-
-    try {
-      const res = await fetch("/api/likes/toggle", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: id }),
-      });
-      if (!res.ok) throw new Error("toggle failed");
-      const data = (await res.json()) as { isLiked: boolean };
-      // サーバ最終状態で確定
-      setLiked((s) => ({ ...s, [id]: data.isLiked }));
-    } catch {
-      // ロールバック
-      setLiked((s) => ({ ...s, [id]: prev }));
-    }
-  };
 
   // 入力が変わったらURLの q を更新
   useEffect(() => {
@@ -69,14 +45,7 @@ export default function ProductsPage() {
         });
         if (!res.ok) throw new Error(await res.text());
         const json = await res.json();
-        const nextItems = json.items as ProductDTO[];
-
-        setItems(nextItems);
-
-        const map = Object.fromEntries(
-          nextItems.map((p) => [p.id, !!p.isLiked])
-        ) as Record<string, boolean>;
-        setLiked(map);
+        setItems(json.items as ProductDTO[]);
       } catch (e) {
         if (e instanceof DOMException && e.name === "AbortError") return;
         console.warn("fetch failed:", e);
@@ -88,6 +57,10 @@ export default function ProductsPage() {
   }, [debounced]);
 
   const total = items.length;
+
+  items.map((product) => {
+    console.log(`product.likeCount:${product.likeCount}`);
+  });
 
   return (
     <div className="space-y-4">
@@ -111,7 +84,7 @@ export default function ProductsPage() {
         </p>
       )}
 
-      <ProductGrid products={items} liked={liked} onToggleLike={toggleLike} />
+      <ProductGrid products={items} />
     </div>
   );
 }
