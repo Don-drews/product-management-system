@@ -1,8 +1,23 @@
+import { auth } from "@/auth";
 import ProductCard from "@/components/products/product-card";
+import { getMyLikedSet } from "@/server/likes";
 import { getNewArrivals } from "@/server/products";
 
 export default async function NewArrivalsSection() {
   const items = await getNewArrivals(6);
+
+  const session = await auth();
+  let likedSet = new Set<string>();
+  if (session?.user && items.length > 0) {
+    likedSet = await getMyLikedSet(
+      session.user.id,
+      items.map((i) => i.id)
+    );
+  }
+  const itemsWithIsLiked = items.map((p) => ({
+    ...p,
+    isLiked: session?.user ? likedSet.has(p.id) : undefined,
+  }));
 
   if (items.length === 0) {
     return (
@@ -26,7 +41,7 @@ export default async function NewArrivalsSection() {
       </div>
 
       <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {items.map((p) => (
+        {itemsWithIsLiked.map((p) => (
           <li key={p.id}>
             <ProductCard product={p} />
           </li>
