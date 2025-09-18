@@ -31,7 +31,7 @@ export function LikeToggle({ productId, initialCount, initialIsLiked }: Props) {
     // 楽観更新
     const optimisticLiked = !(liked ?? false);
     setLiked(optimisticLiked);
-    setCount((c) => c + (optimisticLiked ? 1 : -1));
+    setCount((c) => Math.max(0, c + (optimisticLiked ? 1 : -1)));
 
     try {
       const res = await fetch("/api/likes/toggle", {
