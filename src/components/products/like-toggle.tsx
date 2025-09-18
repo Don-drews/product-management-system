@@ -9,7 +9,7 @@ import { LikeSignInDialog } from "@/components/auth/like-signin-dialog";
 type Props = {
   productId: string;
   initialCount: number;
-  initialIsLiked?: boolean; // 後で getMyLikedSet で埋める予定（今は未使用でもOK）
+  initialIsLiked?: boolean;
 };
 
 export function LikeToggle({ productId, initialCount, initialIsLiked }: Props) {
