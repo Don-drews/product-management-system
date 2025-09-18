@@ -58,10 +58,6 @@ export default function ProductsPage() {
 
   const total = items.length;
 
-  items.map((product) => {
-    console.log(`product.likeCount:${product.likeCount}`);
-  });
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
