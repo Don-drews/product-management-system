@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,14 @@ type Props = {
   initialIsLiked?: boolean;
 };
 
+const LIKE_SYNC_EVENT = "like:sync";
+type LikeSyncDetail = {
+  productId: string;
+  isLiked: boolean;
+  delta: 1 | -1;
+  source: string; // 自分自身の重複反映を避けるための識別子
+};
+
 export function LikeToggle({ productId, initialCount, initialIsLiked }: Props) {
   const { status } = useSession(); // "authenticated" | "unauthenticated" | "loading"
   const [open, setOpen] = useState(false); // ダイアログ
@@ -19,43 +27,56 @@ export function LikeToggle({ productId, initialCount, initialIsLiked }: Props) {
   const [liked, setLiked] = useState<boolean | undefined>(initialIsLiked); // 未確定はundefined
   const [count, setCount] = useState(initialCount);
 
-  const clickUnauthed = () => {
-    // いきなり遷移させず、まず促す
-    setOpen(true);
-  };
+  const source = useId(); // この LikeToggle インスタンスの識別子
+
+  // 🔁 他カードからの更新を受け取って同期
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const {
+        productId: pid,
+        isLiked,
+        delta,
+        source: src,
+      } = (e as CustomEvent<LikeSyncDetail>).detail ?? {};
+      if (!pid || pid !== productId) return;
+      if (src === source) return; // 自分が発火したイベントは無視
+      setLiked(isLiked);
+      setCount((c) => Math.max(0, c + delta));
+    };
+    window.addEventListener(LIKE_SYNC_EVENT, handler as EventListener);
+    return () =>
+      window.removeEventListener(LIKE_SYNC_EVENT, handler as EventListener);
+  }, [productId, source]);
+
+  const clickUnauthed = () => setOpen(true);
 
   const toggle = async () => {
     if (pending) return;
     setPending(true);
 
-    // 楽観更新
-    const optimisticLiked = !(liked ?? false);
-    setLiked(optimisticLiked);
-    setCount((c) => Math.max(0, c + (optimisticLiked ? 1 : -1)));
-
     try {
+      const nextLiked = !(liked ?? false);
+      const delta: 1 | -1 = nextLiked ? 1 : -1;
+      setLiked(nextLiked);
+      setCount((c) => Math.max(0, c + delta));
+
       const res = await fetch("/api/likes/toggle", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId }),
       });
 
-      if (!res.ok) {
-        throw new Error("toggle failed");
-      }
-      const data = (await res.json()) as { isLiked: boolean };
-      // サーバの最終状態で補正
-      setLiked(data.isLiked);
-      setCount((c) => {
-        const should = data.isLiked ? (liked ?? false ? c : c) : c; // 実質そのままでOKだが将来の不整合に備えて補正ロジックを残す
-        return should;
-      });
+      if (!res.ok) throw new Error("toggle failed");
+
+      window.dispatchEvent(
+        new CustomEvent<LikeSyncDetail>(LIKE_SYNC_EVENT, {
+          detail: { productId, isLiked: nextLiked, delta, source },
+        })
+      );
     } catch {
       // ロールバック
       setLiked((prev) => !(prev ?? false));
-      setCount((c) => c + (liked ?? false ? 1 : -1));
-      // 任意：toastで通知してもOK
-      // toast({ variant: "destructive", title: "通信に失敗しました" })
+      setCount((c) => Math.max(0, c + (liked ?? false ? 1 : -1)));
     } finally {
       setPending(false);
     }
