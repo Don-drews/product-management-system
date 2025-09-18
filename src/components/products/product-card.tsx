@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-// import { Heart } from "lucide-react";
 import type { ProductCardData } from "@/types/product";
 import { LikeToggle } from "./like-toggle";
 
@@ -41,11 +40,6 @@ export default function ProductCard({ product }: Props) {
           </div>
         </div>
 
-        {/* 右上：いいね（後でClient後載せに差し替え） */}
-        {/* <div className="flex items-center gap-1 text-xs tabular-nums">
-          <Heart className="h-4 w-4" aria-hidden />
-          {product.likeCount}
-        </div> */}
         <LikeToggle
           productId={product.id}
           initialCount={product.likeCount}
