@@ -3,6 +3,9 @@ import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useMemo, useState } from "react";
+import { getPublicImageUrl } from "@/lib/storage/url";
+import { uploadProductImage } from "@/lib/storage/client";
 
 type CategoryOption = { id: string; name: string };
 
@@ -13,10 +16,33 @@ export default function ProductFormFields({
 }) {
   const {
     register,
+    setValue,
     formState: { errors },
     watch,
   } = useFormContext();
   const imageUrl: string | undefined = watch("imageUrl");
+  const [uploading, setUploading] = useState(false);
+
+  const previewSrc = useMemo(() => {
+    if (!imageUrl) return "";
+    // すでに完全なURLならそのまま、pathなら公開URLに変換
+    const isFull = /^https?:\/\//i.test(imageUrl);
+    return isFull ? imageUrl : getPublicImageUrl(imageUrl);
+  }, [imageUrl]);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const path = await uploadProductImage(file); // ← ここでSupabaseへ直PUT & path取得
+      setValue("imageUrl", path, { shouldValidate: true, shouldDirty: true });
+    } catch (err) {
+      alert((err as Error).message);
+    } finally {
+      setUploading(false);
+    }
+  }
 
   return (
     <>
@@ -54,19 +80,29 @@ export default function ProductFormFields({
         )}
       </div>
 
-      {/* 画像URL */}
+      {/* 画像アップロード */}
       <div className="space-y-2">
-        <Label htmlFor="imageUrl">画像URL（相対 or 絶対）</Label>
-        <Input id="imageUrl" {...register("imageUrl")} />
+        <Label htmlFor="imageFile">商品画像</Label>
+        <Input
+          id="imageFile"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          onChange={handleFileChange}
+        />
+        {/* hiddenで imageUrl をフォーム値に保持（送信用） */}
+        <input type="hidden" {...register("imageUrl")} />
+        {uploading && (
+          <p className="text-sm text-muted-foreground">アップロード中…</p>
+        )}
         {errors?.imageUrl && (
           <p className="text-sm text-red-600">
             {String(errors.imageUrl.message)}
           </p>
         )}
-        {!!imageUrl && (
+        {!!previewSrc && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={imageUrl}
+            src={previewSrc}
             alt="preview"
             className="mt-2 h-32 w-auto rounded border object-cover"
           />

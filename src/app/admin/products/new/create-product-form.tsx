@@ -24,7 +24,7 @@ export default function CreateProductForm({
       name: "",
       description: "",
       price: 0,
-      imageUrl: "/placeholder/no-image.png",
+      imageUrl: "",
       categoryId: categories[0]?.id ?? "",
     },
   });
