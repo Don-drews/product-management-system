@@ -7,6 +7,19 @@ import SearchBar from "@/components/search-bar";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ProductDTO } from "@/schemas/product";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const CATEGORIES = [
+  { name: "未分類", slug: "uncategorized" },
+  { name: "Sports", slug: "sports" },
+  { name: "Food", slug: "food" },
+];
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -15,6 +28,10 @@ export default function ProductsPage() {
   // URLの ?q= から初期値を拾う
   const qInUrl = sp.get("q") ?? "";
   const [query, setQuery] = useState(qInUrl);
+
+  const catInUrl = sp.get("category") ?? "";
+  const [category, setCategory] = useState(catInUrl);
+
   const debounced = useDebounce(query, 300);
 
   const [items, setItems] = useState<ProductDTO[]>([]);
@@ -24,11 +41,16 @@ export default function ProductsPage() {
   useEffect(() => {
     const params = new URLSearchParams(sp.toString());
     if (query) params.set("q", query);
-    else params.delete("q"); // 検索バーになにも入力されていない場合はURLから"q"を削除し、"/products?q="のようなからクエリを残さない。
-    router.push(`/products?${params.toString()}`); // push は履歴を1件積むので、検索中に1文字入力するたびに「戻るボタン」で1文字ずつ戻れる状態になる（これは好み。履歴を汚したくないなら router.replace(...) もアリ）。
+    else params.delete("q");
+
+    if (category) params.set("category", category);
+    else params.delete("category");
+
+    // 履歴を汚したくなければ replace に
+    router.replace(`/products?${params.toString()}`, { scroll: false });
     // ↓ 「useEffect 内で「外側のスコープから参照した値」を依存配列に入れろ」っていうeslintのreact-hooks/exhaustive-deps ルールを無効にしてくれる。
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  }, [query, category]);
 
   // debounced（検索文字列）に変更があるたびにfetch
   useEffect(() => {
@@ -36,8 +58,12 @@ export default function ProductsPage() {
     (async () => {
       setLoading(true);
       try {
-        const url = debounced
-          ? `/api/products?q=${encodeURIComponent(debounced)}`
+        const params = new URLSearchParams();
+        if (debounced) params.set("q", debounced);
+        if (category) params.set("category", category);
+
+        const url = params.toString()
+          ? `/api/products?${params.toString()}`
           : "/api/products";
         const res = await fetch(url, {
           cache: "no-store",
@@ -54,7 +80,7 @@ export default function ProductsPage() {
       }
     })();
     return () => controller.abort();
-  }, [debounced]);
+  }, [debounced, category]);
 
   const total = items.length;
 
@@ -71,6 +97,18 @@ export default function ProductsPage() {
           onChange={setQuery}
           className="w-full sm:max-w-md"
         />
+        <Select value={category} onValueChange={(val) => setCategory(val)}>
+          <SelectTrigger className="w-[220px]">
+            <SelectValue placeholder="カテゴリーで絞り込み" />
+          </SelectTrigger>
+          <SelectContent>
+            {CATEGORIES.map((c) => (
+              <SelectItem key={c.slug || "all"} value={c.slug}>
+                {c.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {loading && <p className="text-sm opacity-70">検索中…</p>}
