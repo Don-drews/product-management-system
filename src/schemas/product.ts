@@ -28,8 +28,8 @@ export const CreateProductSchema = z.object({
     .nonnegative("0以上の数値を入力してね"),
   // .union([A, B]) は 「A または B のどちらかに合格すればOK」 という意味。
   imageUrl: z.union([
-    z.string().url("正しいURLを入力してください"), // 絶対パス
-    relativePath, // 「/ から始まる相対パス」を許可。
+    z.string().url({ message: "正しいURLを入力してください" }), // 絶対パス
+    relativePath, // Supabase Storageのpathも許可
   ]),
   categoryId: z.string(),
 });
