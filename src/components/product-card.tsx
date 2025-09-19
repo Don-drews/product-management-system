@@ -11,9 +11,10 @@ function formatJPY(n: number) {
 
 type Props = {
   product: ProductDTO;
+  priority?: boolean;
 };
 
-export default function ProductCard({ product }: Props) {
+export default function ProductCard({ product, priority = false }: Props) {
   // 画像URLが「フルURL」か「path」かで分岐し、最終的な表示用URLを決定
   const src = product.imageUrl
     ? /^https?:\/\//i.test(product.imageUrl)
@@ -36,7 +37,7 @@ export default function ProductCard({ product }: Props) {
             className="object-cover"
             // 画面幅に応じて最適な画像サイズを配信（重要）
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            priority={false}
+            priority={priority}
           />
         </div>
       </Link>
