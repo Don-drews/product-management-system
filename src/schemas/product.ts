@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const relativePath = z
   .string()
-  .regex(/^\/[^\s]*$/, "先頭が / の相対パスを指定してください");
+  .regex(/^[^\s]+$/, "空白を含まないパスを指定してください");
 
 export const ProductSchema = z.object({
   id: z.string(),
