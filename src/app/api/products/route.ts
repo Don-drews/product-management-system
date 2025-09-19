@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { createProduct, listProducts } from "@/server/products";
+import {
+  createProduct,
+  listProducts,
+  listProductsByCategory,
+} from "@/server/products";
 import { CreateProductSchema } from "@/schemas/product";
 import { auth } from "@/auth";
 import { getMyLikedSet } from "@/server/likes";
@@ -7,10 +11,14 @@ import { getMyLikedSet } from "@/server/likes";
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q") ?? undefined;
+  const category = searchParams.get("category") ?? "";
 
   const session = await auth();
 
-  const items = await listProducts(q);
+  const items = category
+    ? await listProductsByCategory(category, q)
+    : await listProducts(q);
+
   let likedSet = new Set<string>();
   if (session?.user && items.length > 0) {
     likedSet = await getMyLikedSet(
