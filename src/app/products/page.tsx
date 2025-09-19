@@ -14,12 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const CATEGORIES = [
-  { name: "未分類", slug: "uncategorized" },
-  { name: "Sports", slug: "sports" },
-  { name: "Food", slug: "food" },
-];
+import { CategoryListItem } from "@/schemas/category";
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -31,11 +26,29 @@ export default function ProductsPage() {
 
   const catInUrl = sp.get("category") ?? "";
   const [category, setCategory] = useState(catInUrl);
+  const [categories, setCategories] = useState<CategoryListItem[]>([]);
 
   const debounced = useDebounce(query, 300);
 
   const [items, setItems] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let abort = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/categories", { cache: "no-store" });
+        if (!res.ok) throw new Error(await res.text());
+        const json = await res.json();
+        if (!abort) setCategories(json.items as CategoryListItem[]);
+      } catch (e) {
+        console.warn("fetch categories failed:", e);
+      }
+    })();
+    return () => {
+      abort = true;
+    };
+  }, []);
 
   // 入力が変わったらURLの q を更新
   useEffect(() => {
@@ -102,7 +115,7 @@ export default function ProductsPage() {
             <SelectValue placeholder="カテゴリーで絞り込み" />
           </SelectTrigger>
           <SelectContent>
-            {CATEGORIES.map((c) => (
+            {categories.map((c) => (
               <SelectItem key={c.slug || "all"} value={c.slug}>
                 {c.name}
               </SelectItem>
