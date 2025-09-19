@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ProductDTO } from "@/schemas/product";
 import { LikeToggle } from "./products/like-toggle";
+import { getPublicImageUrl } from "@/lib/storage/url";
 
 function formatJPY(n: number) {
   return new Intl.NumberFormat("ja-JP").format(n);
@@ -13,8 +14,12 @@ type Props = {
 };
 
 export default function ProductCard({ product }: Props) {
-  // 画像が無いときのフォールバック
-  const img = product.imageUrl || "/placeholder/no-image.png";
+  // 画像URLが「フルURL」か「path」かで分岐し、最終的な表示用URLを決定
+  const src = product.imageUrl
+    ? /^https?:\/\//i.test(product.imageUrl)
+      ? product.imageUrl // すでにフルURLならそのまま
+      : getPublicImageUrl(product.imageUrl) // pathなら公開URLへ変換
+    : "/placeholder/no-image.png"; // 無い場合はプレースホルダ
 
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-md">
@@ -25,7 +30,7 @@ export default function ProductCard({ product }: Props) {
         {/* 画像領域：比率固定 & レスポンシブ最適化 */}
         <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-900">
           <Image
-            src={img}
+            src={src}
             alt={product.name}
             fill
             className="object-cover"
