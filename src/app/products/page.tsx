@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/select";
 import { CategoryListItem } from "@/schemas/category";
 
+const ALL = "__all__";
+
 export default function ProductsPage() {
   const router = useRouter();
   const sp = useSearchParams();
@@ -24,8 +26,8 @@ export default function ProductsPage() {
   const qInUrl = sp.get("q") ?? "";
   const [query, setQuery] = useState(qInUrl);
 
-  const catInUrl = sp.get("category") ?? "";
-  const [category, setCategory] = useState(catInUrl);
+  const catInUrl = sp.get("category") ?? undefined;
+  const [category, setCategory] = useState<string | undefined>(catInUrl);
   const [categories, setCategories] = useState<CategoryListItem[]>([]);
 
   const debounced = useDebounce(query, 300);
@@ -110,13 +112,17 @@ export default function ProductsPage() {
           onChange={setQuery}
           className="w-full sm:max-w-md"
         />
-        <Select value={category} onValueChange={(val) => setCategory(val)}>
+        <Select
+          value={category ?? ALL}
+          onValueChange={(val) => setCategory(val === ALL ? undefined : val)}
+        >
           <SelectTrigger className="w-[220px]">
             <SelectValue placeholder="カテゴリーで絞り込み" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value={ALL}>すべて</SelectItem>
             {categories.map((c) => (
-              <SelectItem key={c.slug || "all"} value={c.slug}>
+              <SelectItem key={c.slug} value={c.slug}>
                 {c.name}
               </SelectItem>
             ))}
