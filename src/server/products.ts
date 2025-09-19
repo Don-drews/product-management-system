@@ -6,6 +6,7 @@ import type {
   UpdateProductInput,
 } from "@/schemas/product";
 import { ProductCardData } from "@/types/product";
+import { Prisma } from "@prisma/client";
 
 export async function getProductById(id: string): Promise<ProductDTO | null> {
   const productRecord = await prisma.product.findUnique({
@@ -29,6 +30,33 @@ export async function listProducts(query?: string): Promise<ProductDTO[]> {
       _count: { select: { likes: true } },
     },
   });
+  return rows.map((product) =>
+    toProductDTO(product as ProductWithCategory, {
+      likeCount: product._count.likes,
+    })
+  );
+}
+
+/** カテゴリslugで絞り込み（queryがあればAND） */
+export async function listProductsByCategory(
+  categorySlug: string,
+  query?: string
+): Promise<ProductDTO[]> {
+  const where: Prisma.ProductWhereInput = { category: { slug: categorySlug } };
+
+  if (query && query.trim()) {
+    where.name = { contains: query.trim(), mode: "insensitive" as const };
+  }
+
+  const rows = await prisma.product.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    include: {
+      category: { select: { name: true } },
+      _count: { select: { likes: true } },
+    },
+  });
+
   return rows.map((product) =>
     toProductDTO(product as ProductWithCategory, {
       likeCount: product._count.likes,
