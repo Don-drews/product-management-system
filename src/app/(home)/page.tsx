@@ -2,8 +2,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import NewArrivalsSection from "@/components/top/sections/new-arrivals";
 import PopularSection from "@/components/top/sections/popular";
+import { auth } from "@/auth";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
   return (
     <main className="min-h-screen">
       {/* HERO */}
@@ -47,9 +49,11 @@ export default function HomePage() {
                 <Button asChild size="lg">
                   <Link href="/products">商品を探す</Link>
                 </Button>
-                <Button asChild size="lg" variant="outline">
-                  <Link href="/auth/signin?callbackUrl=/">サインイン</Link>
-                </Button>
+                {!session?.user && (
+                  <Button asChild size="lg" variant="outline">
+                    <Link href="/auth/signin?callbackUrl=/">サインイン</Link>
+                  </Button>
+                )}
               </div>
             </div>
           </div>
