@@ -45,7 +45,7 @@ export default async function ProductDetailPage({
         </Link>
         <Link
           href={`/admin/products/${id}/edit`}
-          className="text-sm underline underline-offset-4 text-blue-600"
+          className="text-sm underline underline-offset-4"
         >
           編集する
         </Link>
