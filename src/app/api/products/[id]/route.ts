@@ -29,8 +29,11 @@ export async function PUT(req: Request, ctx: { params: { id: string } }) {
   }
 }
 
-export async function DELETE(_req: Request, ctx: { params: { id: string } }) {
-  const ok = await deleteProduct(ctx.params.id);
+export async function DELETE(
+  _req: Request,
+  ctx: Promise<{ params: { id: string } }>
+) {
+  const ok = await deleteProduct((await ctx).params.id);
   return ok
     ? NextResponse.json({ ok: true })
     : NextResponse.json({ message: "Not Found" }, { status: 404 });
