@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/header";
 import { auth } from "@/auth";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +58,7 @@ export default async function RootLayout({
               <div className="relative z-10">{children}</div>
             </main>
           </Providers>
+          <Toaster position="top-center" richColors />
           {/* 共通フッターを入れるならここ */}
         </ThemeProvider>
       </body>
