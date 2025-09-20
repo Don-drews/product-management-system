@@ -2,10 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ProductCardData } from "@/types/product";
 import { LikeToggle } from "./like-toggle";
+import { getImageSrcUrl } from "@/lib/storage/src";
 
 type Props = { product: ProductCardData };
 
 export default function ProductCard({ product }: Props) {
+  const src = getImageSrcUrl(product.imageUrl);
   return (
     <div className="group relative rounded-2xl border bg-card p-3 shadow-sm">
       {/* 画像 */}
@@ -15,7 +17,7 @@ export default function ProductCard({ product }: Props) {
       >
         <div className="relative aspect-[4/5] w-full">
           <Image
-            src={product.imageUrl}
+            src={src}
             alt={product.name}
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
