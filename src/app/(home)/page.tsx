@@ -50,9 +50,6 @@ export default function HomePage() {
                 <Button asChild size="lg" variant="outline">
                   <Link href="/auth/signin?callbackUrl=/">サインイン</Link>
                 </Button>
-                <span className="text-xs text-muted-foreground">
-                  ゲストでもいいね数は表示されます
-                </span>
               </div>
             </div>
           </div>
