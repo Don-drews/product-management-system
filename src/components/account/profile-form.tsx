@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { updateProfile } from "@/server/user";
 import { EditProfileInput, EditProfileSchema } from "@/schemas/user";
+import { toast } from "sonner";
 
 export default function ProfileForm({
   defaultValues,
@@ -31,7 +32,11 @@ export default function ProfileForm({
 
     startTransition(async () => {
       const res = await updateProfile(fd);
-      if (!res.ok) return;
+      if (!res.ok) {
+        toast.error("エラーが発生しました");
+        return;
+      }
+      toast.success("名前を変更しました！");
       await updateSession({ name: values.name }); // ヘッダーの表示名も即更新
       router.refresh();
     });
