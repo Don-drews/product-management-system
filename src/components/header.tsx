@@ -10,8 +10,6 @@ export function Header() {
   const { data: session, status } = useSession();
 
   const accountImage = session?.user.image ? session.user.image : null;
-  console.log(`accountImage:${accountImage}`);
-
   const avatarSrc = getAccountImageSrcUrl(accountImage);
 
   return (
