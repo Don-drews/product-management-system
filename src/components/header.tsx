@@ -10,6 +10,7 @@ export function Header() {
   const { data: session, status } = useSession();
 
   const accountImage = session?.user.image ? session.user.image : null;
+  console.log(`accountImage:${accountImage}`);
 
   const avatarSrc = getAccountImageSrcUrl(accountImage);
 
@@ -26,18 +27,20 @@ export function Header() {
           <div className="flex items-center gap-3">
             {/* アバター画像 */}
             <div className="relative h-8 w-8 overflow-hidden rounded-full">
-              <Image
-                src={avatarSrc}
-                alt="avatar"
-                fill
-                sizes="32px"
-                className="object-cover"
-              />
+              <Link href={`/account`}>
+                <Image
+                  src={avatarSrc}
+                  alt="avatar"
+                  fill
+                  sizes="32px"
+                  className="object-cover"
+                />
+              </Link>
             </div>
 
             {/* メール（PC表示のみ） */}
             <span className="hidden text-sm text-muted-foreground sm:inline">
-              {session.user?.email}
+              <Link href={`/account`}>{session.user?.email}</Link>
             </span>
             <Button
               variant="outline"
