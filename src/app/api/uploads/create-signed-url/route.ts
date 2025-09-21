@@ -2,11 +2,20 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { randomUUID } from "crypto";
 import { auth } from "@/auth";
+import z from "zod";
 
-type Kind = "product" | "account";
+const BodySchema = z.object({
+  filename: z.string().min(1),
+  contentType: z.string().min(1),
+  kind: z.enum(["product", "account"]).optional(),
+});
 
 export async function POST(req: Request) {
-  const { filename, contentType, kind = "product" } = await req.json();
+  const {
+    filename,
+    contentType,
+    kind = "product",
+  } = BodySchema.parse(await req.json());
 
   if (!filename || !contentType) {
     return NextResponse.json({ message: "Bad Request" }, { status: 400 });

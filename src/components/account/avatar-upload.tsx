@@ -20,13 +20,15 @@ export default function AvatarUpload({ disabled, onUploaded }: Props) {
 
     setUploading(true);
     try {
+      console.log(`fileName: ${file.name},\nfileType: ${file.type},`);
+
       // 1) 署名付きURLを取得
-      const res1 = await fetch("/api/account/avatar/signed-url", {
+      const res1 = await fetch("/api/uploads/create-signed-url", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          fileName: file.name,
-          fileType: file.type,
+          filename: file.name,
+          contentType: file.type,
           kind: "account",
         }),
       });
