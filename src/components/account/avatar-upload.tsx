@@ -2,6 +2,9 @@
 
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   disabled?: boolean;
@@ -11,6 +14,16 @@ type Props = {
 export default function AvatarUpload({ disabled, onUploaded }: Props) {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const { update } = useSession();
+  const router = useRouter();
+
+  const afterSaved = async (newPath: string | null) => {
+    // セッションの user.image を更新（JWT の jwt コールバックで受ける）
+    await update({ image: newPath ?? null });
+    // サーバー側で auth() を使っている UI も即反映したい時は
+    router.refresh();
+  };
 
   const pick = () => inputRef.current?.click();
 
@@ -59,8 +72,10 @@ export default function AvatarUpload({ disabled, onUploaded }: Props) {
         body: JSON.stringify({ imagePath: path }),
       });
       if (!res3.ok) throw new Error("Failed to save profile image");
+      await afterSaved(path);
 
       onUploaded?.(path);
+      toast.success("プロフィール画像を変更しました！");
     } catch (e: unknown) {
       console.log(`===== やっべ =====`);
 

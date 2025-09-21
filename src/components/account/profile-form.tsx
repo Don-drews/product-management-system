@@ -30,6 +30,9 @@ export default function ProfileForm({ defaultValues }: Props) {
   );
   const [saving, setSaving] = useState(false);
 
+  const { update } = useSession();
+  const router = useRouter();
+
   const save = async () => {
     setSaving(true);
     try {
@@ -39,10 +42,14 @@ export default function ProfileForm({ defaultValues }: Props) {
         body: JSON.stringify({ name, imagePath }),
       });
       if (!res.ok) throw new Error("保存に失敗しました");
-      // ページを再取得してヘッダー等にも反映したい場合
-      //  - RSCを使っているなら router.refresh() を親で呼ぶ or mutate する
+
+      // セッションへ即反映
+      await update({ name, image: imagePath ?? null });
+      router.refresh();
+      toast.success("名前を変更しました！");
     } catch (err) {
-      alert((err as Error).message);
+      console.log((err as Error).message);
+      toast.error("エラーが発生しました");
     } finally {
       setSaving(false);
     }
