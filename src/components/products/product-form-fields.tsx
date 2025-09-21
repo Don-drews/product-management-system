@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useMemo, useState } from "react";
-import { getPublicImageUrl } from "@/lib/storage/url";
+import { getProductImageUrl } from "@/lib/storage/url";
 import { uploadProductImage } from "@/lib/storage/client";
 
 type CategoryOption = { id: string; name: string };
@@ -27,7 +27,7 @@ export default function ProductFormFields({
     if (!imageUrl) return "";
     // すでに完全なURLならそのまま、pathなら公開URLに変換
     const isFull = /^https?:\/\//i.test(imageUrl);
-    return isFull ? imageUrl : getPublicImageUrl(imageUrl);
+    return isFull ? imageUrl : getProductImageUrl(imageUrl);
   }, [imageUrl]);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {

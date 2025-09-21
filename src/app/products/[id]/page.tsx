@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getProductById } from "@/server/products";
 import type { Metadata } from "next";
-import { getPublicImageUrl } from "@/lib/storage/url";
+import { getProductImageUrl } from "@/lib/storage/url";
 
 function formatJPY(n: number) {
   return new Intl.NumberFormat("ja-JP").format(n);
@@ -33,7 +33,7 @@ export default async function ProductDetailPage({
   const src = product.imageUrl
     ? /^https?:\/\//i.test(product.imageUrl)
       ? product.imageUrl // すでにフルURLならそのまま
-      : getPublicImageUrl(product.imageUrl) // pathなら公開URLへ変換
+      : getProductImageUrl(product.imageUrl) // pathなら公開URLへ変換
     : "/placeholder/no-image.png";
 
   return (
