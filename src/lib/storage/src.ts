@@ -11,7 +11,7 @@ export function getProductImageSrcUrl(imageUrl: string) {
     : getProductImageUrl(DEFAULT_PRODUCT_IMAGE);
 }
 
-export function getAccountImageSrcUrl(imageUrl: string | undefined) {
+export function getAccountImageSrcUrl(imageUrl: string | null | undefined) {
   // 画像URLが「フルURL」か「path」かで分岐し、最終的な表示用URLを決定
   return imageUrl
     ? /^https?:\/\//i.test(imageUrl)
