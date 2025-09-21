@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ProductDTO } from "@/schemas/product";
 import { LikeToggle } from "./products/like-toggle";
-import { getImageSrcUrl } from "@/lib/storage/src";
+import { getProductImageSrcUrl } from "@/lib/storage/src";
 
 function formatJPY(n: number) {
   return new Intl.NumberFormat("ja-JP").format(n);
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function ProductCard({ product, priority = false }: Props) {
-  const src = getImageSrcUrl(product.imageUrl);
+  const src = getProductImageSrcUrl(product.imageUrl);
 
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-md">

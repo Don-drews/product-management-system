@@ -2,12 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ProductCardData } from "@/types/product";
 import { LikeToggle } from "./like-toggle";
-import { getImageSrcUrl } from "@/lib/storage/src";
+import { getProductImageSrcUrl } from "@/lib/storage/src";
 
 type Props = { product: ProductCardData };
 
 export default function ProductCard({ product }: Props) {
-  const src = getImageSrcUrl(product.imageUrl);
+  const src = getProductImageSrcUrl(product.imageUrl);
   return (
     <div className="group relative rounded-2xl border bg-card p-3 shadow-sm">
       {/* 画像 */}
