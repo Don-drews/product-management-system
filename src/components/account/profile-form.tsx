@@ -1,15 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { updateProfile } from "@/server/user";
-import { EditProfileInput, EditProfileSchema } from "@/schemas/user";
 import { toast } from "sonner";
 import Image from "next/image";
 import AvatarUpload from "./avatar-upload";
