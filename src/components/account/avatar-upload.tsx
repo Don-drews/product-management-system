@@ -54,7 +54,7 @@ export default function AvatarUpload({ disabled, onUploaded }: Props) {
 
       const { bucket, token, path } = await res1.json();
 
-      // 2) 署名付きURLへアップロード（PUT）
+      // 2) 署名付きURLへアップロード
       const { error } = await supabaseClient.storage
         .from(bucket)
         .uploadToSignedUrl(path, token, file, {
