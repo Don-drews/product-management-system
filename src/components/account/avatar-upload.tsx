@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { supabaseClient } from "@/lib/supabase/client";
 
 type Props = {
   disabled?: boolean;
@@ -51,27 +52,25 @@ export default function AvatarUpload({ disabled, onUploaded }: Props) {
         throw new Error(d?.message ?? "Failed to get signed url");
       }
 
-      const { signedUrl, token, path } = await res1.json();
+      const { bucket, token, path } = await res1.json();
 
       // 2) 署名付きURLへアップロード（PUT）
-      //    Supabase 公式は uploadToSignedUrl を推奨だが、fetch PUT でもOK
-      const res2 = await fetch(signedUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type || "application/octet-stream",
-          "x-upsert": "true",
-        },
-        body: file,
-      });
-      if (!res2.ok) throw new Error("Upload failed");
+      const { error } = await supabaseClient.storage
+        .from(bucket)
+        .uploadToSignedUrl(path, token, file, {
+          contentType: file.type,
+          upsert: true,
+        });
+
+      if (error) throw error;
 
       // 3) DBの user.image を「パス」で更新
-      const res3 = await fetch("/api/account/profile", {
+      const res2 = await fetch("/api/account/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ imagePath: path }),
       });
-      if (!res3.ok) throw new Error("Failed to save profile image");
+      if (!res2.ok) throw new Error("Failed to save profile image");
 
       await afterSaved(path);
 
