@@ -9,7 +9,7 @@ import { getAccountImageSrcUrl } from "@/lib/storage/src";
 export function Header() {
   const { data: session, status } = useSession();
 
-  const accountImage = session?.user.image ? session.user.image : undefined;
+  const accountImage = session?.user.image ? session.user.image : null;
 
   const avatarSrc = getAccountImageSrcUrl(accountImage);
 
