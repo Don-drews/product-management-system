@@ -1,5 +1,5 @@
 import { DEFAULT_PRODUCT_IMAGE } from "@/constants/product";
-import { getProductImageUrl } from "./url";
+import { getAccountImageUrl, getProductImageUrl } from "./url";
 import { DEFAULT_ACCOUNT_IMAGE } from "@/constants/account";
 
 export function getProductImageSrcUrl(imageUrl: string) {
@@ -16,6 +16,6 @@ export function getAccountImageSrcUrl(imageUrl: string | undefined) {
   return imageUrl
     ? /^https?:\/\//i.test(imageUrl)
       ? imageUrl // すでにフルURLならそのまま
-      : getProductImageUrl(imageUrl) // pathなら公開URLへ変換
-    : getProductImageUrl(DEFAULT_ACCOUNT_IMAGE);
+      : getAccountImageUrl(imageUrl) // pathなら公開URLへ変換
+    : getAccountImageUrl(DEFAULT_ACCOUNT_IMAGE);
 }
