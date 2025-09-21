@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import ProfileForm from "@/components/account/profile-form";
+import { getAccountImageSrcUrl } from "@/lib/storage/src";
 
 export default async function AccountPage() {
   const session = await auth();
@@ -16,6 +17,8 @@ export default async function AccountPage() {
     where: { id: session.user.id },
     select: { name: true, email: true, image: true },
   });
+
+  const avatarUrl = getAccountImageSrcUrl(me?.image);
 
   return (
     <div className="mx-auto w-full max-w-4xl p-6">
@@ -33,20 +36,13 @@ export default async function AccountPage() {
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
               <div className="relative h-14 w-14 overflow-hidden rounded-full bg-muted">
-                {/* 画像URLがない場合はプレースホルダを表示 */}
-                {me?.image ? (
-                  <Image
-                    src={me.image}
-                    alt="avatar"
-                    fill
-                    sizes="56px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex h-14 w-14 items-center justify-center text-lg font-medium">
-                    {(me?.name?.[0] ?? "?").toUpperCase()}
-                  </div>
-                )}
+                <Image
+                  src={avatarUrl}
+                  alt="avatar"
+                  fill
+                  sizes="56px"
+                  className="object-cover"
+                />
               </div>
               <div className="min-w-0">
                 <div className="truncate font-medium">
@@ -74,6 +70,7 @@ export default async function AccountPage() {
             <ProfileForm
               defaultValues={{
                 name: me?.name ?? "",
+                imagePath: me?.image ?? null,
               }}
             />
           </CardContent>
