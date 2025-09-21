@@ -72,13 +72,12 @@ export default function AvatarUpload({ disabled, onUploaded }: Props) {
         body: JSON.stringify({ imagePath: path }),
       });
       if (!res3.ok) throw new Error("Failed to save profile image");
+
       await afterSaved(path);
 
       onUploaded?.(path);
       toast.success("プロフィール画像を変更しました！");
     } catch (e: unknown) {
-      console.log(`===== やっべ =====`);
-
       const msg =
         e instanceof Error
           ? e.message
