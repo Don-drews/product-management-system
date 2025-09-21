@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -11,49 +11,82 @@ import { Label } from "@/components/ui/label";
 import { updateProfile } from "@/server/user";
 import { EditProfileInput, EditProfileSchema } from "@/schemas/user";
 import { toast } from "sonner";
+import Image from "next/image";
+import AvatarUpload from "./avatar-upload";
+import { getAccountImageSrcUrl } from "@/lib/storage/src";
 
-export default function ProfileForm({
-  defaultValues,
-}: {
-  defaultValues: EditProfileInput;
-}) {
-  const router = useRouter();
-  const { update: updateSession } = useSession();
-  const [pending, startTransition] = useTransition();
+type Props = {
+  defaultValues: {
+    name: string;
+    // 追加: imagePath は DB に保存されている「パス」想定（null/空なら未設定）
+    imagePath?: string | null;
+  };
+};
 
-  const form = useForm<EditProfileInput>({
-    resolver: zodResolver(EditProfileSchema),
-    defaultValues,
-  });
+export default function ProfileForm({ defaultValues }: Props) {
+  const [name, setName] = useState(defaultValues.name ?? "");
+  const [imagePath, setImagePath] = useState<string | null>(
+    defaultValues.imagePath ?? null
+  );
+  const [saving, setSaving] = useState(false);
 
-  const onSubmit = (values: EditProfileInput) => {
-    const fd = new FormData();
-    fd.set("name", values.name);
-
-    startTransition(async () => {
-      const res = await updateProfile(fd);
-      if (!res.ok) {
-        toast.error("エラーが発生しました");
-        return;
-      }
-      toast.success("名前を変更しました！");
-      await updateSession({ name: values.name }); // ヘッダーの表示名も即更新
-      router.refresh();
-    });
+  const save = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/account/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, imagePath }),
+      });
+      if (!res.ok) throw new Error("保存に失敗しました");
+      // ページを再取得してヘッダー等にも反映したい場合
+      //  - RSCを使っているなら router.refresh() を親で呼ぶ or mutate する
+    } catch (err) {
+      alert((err as Error).message);
+    } finally {
+      setSaving(false);
+    }
   };
 
+  const avatarUrl = getAccountImageSrcUrl(imagePath);
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-      <div className="space-y-2">
-        <Label htmlFor="name">名前</Label>
-        <Input id="name" {...form.register("name")} disabled={pending} />
-        <p className="text-xs text-red-500">
-          {form.formState.errors.name?.message}
-        </p>
+    <form
+      className="space-y-6"
+      onSubmit={(e) => {
+        e.preventDefault();
+        save();
+      }}
+    >
+      {/* アバター */}
+      <div className="flex items-center gap-4">
+        <div className="relative h-16 w-16 overflow-hidden rounded-full bg-muted">
+          <Image
+            src={avatarUrl}
+            alt="avatar"
+            fill
+            sizes="64px"
+            className="object-cover"
+          />
+        </div>
+        <AvatarUpload
+          onUploaded={(path) => setImagePath(path || null)}
+          disabled={saving}
+        />
       </div>
 
-      <Button type="submit" disabled={pending}>
-        {pending ? "更新中…" : "保存"}
+      {/* 表示名 */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">表示名</label>
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="表示名を入力"
+        />
+      </div>
+
+      <Button type="submit" disabled={saving}>
+        {saving ? "保存中..." : "保存する"}
       </Button>
     </form>
   );

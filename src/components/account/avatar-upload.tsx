@@ -24,7 +24,11 @@ export default function AvatarUpload({ disabled, onUploaded }: Props) {
       const res1 = await fetch("/api/account/avatar/signed-url", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileName: file.name, fileType: file.type }),
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          kind: "account",
+        }),
       });
 
       if (!res1.ok) {
@@ -56,6 +60,8 @@ export default function AvatarUpload({ disabled, onUploaded }: Props) {
 
       onUploaded?.(path);
     } catch (e: unknown) {
+      console.log(`===== やっべ =====`);
+
       const msg =
         e instanceof Error
           ? e.message
