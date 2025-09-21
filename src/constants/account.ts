@@ -1,1 +1,1 @@
-export const DEFAULT_ACCOUNT_IMAGE = "/placeholder/default.png";
+export const DEFAULT_ACCOUNT_IMAGE = "placeholder/default.png";

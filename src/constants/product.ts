@@ -1,1 +1,1 @@
-export const DEFAULT_PRODUCT_IMAGE = "/placeholder/no-image.png";
+export const DEFAULT_PRODUCT_IMAGE = "placeholder/no-image.png";
