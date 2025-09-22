@@ -6,20 +6,22 @@ import {
 } from "@/server/products";
 import { UpdateProductSchema } from "@/schemas/product";
 
+type Params = Promise<{ id: string }>;
+
 // 変数に"_"がつく意味 → 呼ばれているが、使用されていない変数は"_"をつける。
 // "_req"とすることでLinterの「未使用変数の警告」が出なくなる。
-export async function GET(_req: Request, ctx: { params: { id: string } }) {
-  const p = await getProductById(ctx.params.id);
+export async function GET(_req: Request, ctx: { params: Params }) {
+  const p = await getProductById((await ctx.params).id);
   if (!p) return NextResponse.json({ message: "Not Found" }, { status: 404 });
   return NextResponse.json({ item: p });
 }
 
-export async function PUT(req: Request, ctx: { params: { id: string } }) {
+export async function PUT(req: Request, ctx: { params: Params }) {
   try {
     const body = await req.json();
     console.log("【更新】\nbody:", body);
     const input = UpdateProductSchema.parse(body);
-    const updated = await updateProduct(ctx.params.id, input);
+    const updated = await updateProduct((await ctx.params).id, input);
     if (!updated)
       return NextResponse.json({ message: "Not Found" }, { status: 404 });
     return NextResponse.json({ item: updated });
