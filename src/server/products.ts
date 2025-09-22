@@ -186,3 +186,44 @@ export async function getPopularIn7Days(limit = 8): Promise<ProductCardData[]> {
   merged.sort((a, b) => orderMap.get(a.id)! - orderMap.get(b.id)!);
   return merged;
 }
+
+/**
+ * ユーザーが「いいね」した商品を、いいね日時の新しい順で取得
+ * - 並び順: Like.createdAt desc（＝最近いいねした順）
+ * - likeCount は累計（_count.likes）
+ * - isLiked は常に true
+ */
+export async function getLikedProductsByUser(
+  userId: string,
+  opts?: { take?: number; skip?: number }
+): Promise<ProductDTO[]> {
+  const take = opts?.take ?? 50; // 取得する件数
+  const skip = opts?.skip ?? 0; // 先頭からスキップする件数
+
+  const likes = await prisma.like.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" }, // いいねした“時系列”で並べる
+    take,
+    skip,
+    select: {
+      product: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          imageUrl: true,
+          description: true,
+          createdAt: true,
+          updatedAt: true,
+          categoryId: true,
+          category: { select: { name: true } },
+          _count: { select: { likes: true } },
+        },
+      },
+    },
+  });
+
+  return likes.map(({ product }) =>
+    toProductDTO(product, { likeCount: product._count.likes, isLiked: true })
+  );
+}
