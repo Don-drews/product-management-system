@@ -8,7 +8,6 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
@@ -19,7 +18,6 @@ export function Header() {
 
   const accountImage = session?.user.image ? session.user.image : null;
   const avatarSrc = getAccountImageSrcUrl(accountImage);
-  const isAdmin = session?.user?.role === "ADMIN"; // 役割を持っている場合のみ
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
@@ -57,9 +55,6 @@ export function Header() {
 
             {/* メニュー本体 */}
             <DropdownMenuContent align="end" sideOffset={8} className="w-56">
-              {/* <DropdownMenuLabel>アカウント</DropdownMenuLabel> */}
-              {/* <DropdownMenuSeparator /> */}
-
               <DropdownMenuItem asChild>
                 <Link href="/account">プロフィール編集</Link>
               </DropdownMenuItem>
