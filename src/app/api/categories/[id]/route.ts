@@ -31,9 +31,9 @@ export async function PUT(req: Request, { params }: { params: Params }) {
   }
 }
 
-export async function DELETE(_req: Request, ctx: { params: Params }) {
+export async function DELETE(_req: Request, { params }: { params: Params }) {
   try {
-    const { id } = await ctx.params;
+    const { id } = await params;
     const result = await deleteCategoryReassigningProducts(id);
     return NextResponse.json(
       {
