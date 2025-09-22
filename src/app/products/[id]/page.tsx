@@ -5,7 +5,6 @@ import { getProductById } from "@/server/products";
 import type { Metadata } from "next";
 import { getProductImageUrl } from "@/lib/storage/url";
 import { auth } from "@/auth";
-import { useSession } from "next-auth/react";
 
 function formatJPY(n: number) {
   return new Intl.NumberFormat("ja-JP").format(n);
