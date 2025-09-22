@@ -9,12 +9,9 @@ import {
 
 type Params = Promise<{ id: string }>;
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_req: Request, { params }: { params: Params }) {
   try {
-    const item = await getCategoryById(params.id);
+    const item = await getCategoryById((await params).id);
     return NextResponse.json({ item }, { status: 200 });
   } catch (e: unknown) {
     const { status, message } = handleApiError(e);
