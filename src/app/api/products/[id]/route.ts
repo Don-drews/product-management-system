@@ -10,18 +10,18 @@ type Params = Promise<{ id: string }>;
 
 // 変数に"_"がつく意味 → 呼ばれているが、使用されていない変数は"_"をつける。
 // "_req"とすることでLinterの「未使用変数の警告」が出なくなる。
-export async function GET(_req: Request, ctx: { params: Params }) {
-  const p = await getProductById((await ctx.params).id);
+export async function GET(_req: Request, { params }: { params: Params }) {
+  const p = await getProductById((await params).id);
   if (!p) return NextResponse.json({ message: "Not Found" }, { status: 404 });
   return NextResponse.json({ item: p });
 }
 
-export async function PUT(req: Request, ctx: { params: Params }) {
+export async function PUT(req: Request, { params }: { params: Params }) {
   try {
     const body = await req.json();
     console.log("【更新】\nbody:", body);
     const input = UpdateProductSchema.parse(body);
-    const updated = await updateProduct((await ctx.params).id, input);
+    const updated = await updateProduct((await params).id, input);
     if (!updated)
       return NextResponse.json({ message: "Not Found" }, { status: 404 });
     return NextResponse.json({ item: updated });
@@ -31,8 +31,8 @@ export async function PUT(req: Request, ctx: { params: Params }) {
   }
 }
 
-export async function DELETE(_req: Request, ctx: Promise<{ params: Params }>) {
-  const ok = await deleteProduct((await (await ctx).params).id);
+export async function DELETE(_req: Request, { params }: { params: Params }) {
+  const ok = await deleteProduct((await params).id);
   return ok
     ? NextResponse.json({ ok: true })
     : NextResponse.json({ message: "Not Found" }, { status: 404 });
