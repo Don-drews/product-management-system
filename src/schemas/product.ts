@@ -1,0 +1,43 @@
+import { z } from "zod";
+
+const relativePath = z
+  .string()
+  .regex(/^[^\s]+$/, "空白を含まないパスを指定してください");
+
+export const ProductSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  price: z.number(),
+  imageUrl: z.string(),
+  categoryId: z.string(),
+  categoryName: z.string(),
+  createdAt: z.string(), // API返却はISO文字列に統一
+  updatedAt: z.string(), // API返却はISO文字列に統一
+  isLiked: z.boolean().optional(),
+  likeCount: z.number().optional(),
+});
+
+// 商品作成用
+export const CreateProductSchema = z.object({
+  name: z.string().min(1, "商品名は必須です"),
+  description: z.string().optional(),
+  price: z
+    .number("数値を入力してね")
+    .int("有効な整数を入力してね")
+    .nonnegative("0以上の数値を入力してね"),
+  // .union([A, B]) は 「A または B のどちらかに合格すればOK」 という意味。
+  imageUrl: z.union([
+    z.string().url({ message: "正しいURLを入力してください" }), // 絶対パス
+    relativePath, // Supabase Storageのpathも許可
+  ]),
+  categoryId: z.string(),
+});
+
+// 商品更新用
+export const UpdateProductSchema = CreateProductSchema.partial(); // Zodの.partial()は「スキーマのすべてのフィールドを任意（optional）に変える」メソッド
+
+// TypeScript の型を自動生成
+export type ProductDTO = z.infer<typeof ProductSchema>;
+export type CreateProductInput = z.infer<typeof CreateProductSchema>;
+export type UpdateProductInput = z.infer<typeof UpdateProductSchema>;

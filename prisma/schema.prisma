@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Int // 円（整数）
+  imageUrl    String
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict) // onDelete: Restrict → カテゴリに紐づく商品がある状態で削除を禁止
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  likes       Like[]
+
+  @@index([categoryId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Like {
+  id         String   @id @default(uuid())
+  productId  String
+  userId     String
+  createdAt  DateTime @default(now())
+
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 重複いいね防止 & 「自分のいいね状態の一括取得」を最適化
+  @@unique([userId, productId])
+
+  // 人気（直近7日）集計用
+  @@index([productId, createdAt(sort: Desc)])
+
+  // 物理テーブル名は likes に（SQL予約語 LIKE を避けるため）
+  @@map("likes")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String?  @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role     @default(USER)
+
+  accounts      Account[]
+
+  likes       Like[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+}
