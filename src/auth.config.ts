@@ -1,5 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import Email from "next-auth/providers/email";
+import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { AdapterUser } from "next-auth/adapters";
@@ -14,6 +15,10 @@ export const authOptions: NextAuthOptions = {
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
       maxAge: 60 * 60, // リンク有効期限 1h
+    }),
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
 

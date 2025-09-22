@@ -27,6 +27,11 @@ export default function SignInPage() {
   const [isPending, startTransition] = useTransition();
   const [localError, setLocalError] = useState<string | null>(null);
 
+  // --- 追加（OAuth用の軽いローディング） ---
+  const [oauthLoading, setOauthLoading] = useState<null | "google" | "discord">(
+    null
+  );
+
   const errorMessages: Record<string, string> = {
     OAuthAccountNotLinked: "同じメールで登録済みのアカウントがあります。",
     EmailSignin: "メール送信に失敗しました。入力を確認してください。",
@@ -60,6 +65,14 @@ export default function SignInPage() {
         )}&callbackUrl=${encodeURIComponent(callbackUrl)}`
       );
     });
+  };
+
+  const onOAuth = (provider: "google" | "discord") => {
+    // フォーム送信とは別に、OAuth中はボタンを無効化
+    setOauthLoading(provider);
+    // OAuthは基本リダイレクトを伴うので、戻ってこない前提でOK
+    // callbackUrl は既存のクエリ値を流用
+    void signIn(provider, { callbackUrl });
   };
 
   return (
@@ -129,11 +142,29 @@ export default function SignInPage() {
             <Separator />
           </div>
           <div className="grid gap-3">
-            <Button variant="outline" className="w-full">
-              Googleで続行
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => onOAuth("google")}
+              disabled={oauthLoading !== null}
+              aria-busy={oauthLoading === "google"}
+            >
+              {oauthLoading === "google"
+                ? "Googleへリダイレクト中…"
+                : "Googleで続行"}
             </Button>
-            <Button variant="outline" className="w-full">
-              Discordで続行
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => onOAuth("discord")}
+              disabled={oauthLoading !== null}
+              aria-busy={oauthLoading === "discord"}
+            >
+              {oauthLoading === "discord"
+                ? "Discordへリダイレクト中…"
+                : "Discordで続行"}
             </Button>
           </div>
         </CardContent>
