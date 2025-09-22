@@ -3,6 +3,7 @@ import { getProductById } from "@/server/products";
 import { listCategories } from "@/server/categories";
 import EditProductForm from "./edit-form-client";
 import DeleteProductButton from "@/components/products/delete-product-button";
+import Link from "next/link";
 
 export default async function EditProductPage({
   params,
@@ -20,6 +21,12 @@ export default async function EditProductPage({
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-6 space-y-6">
+      <Link
+        href={`/products/${id}`}
+        className="text-sm underline underline-offset-4"
+      >
+        商品詳細へ
+      </Link>
       <h1 className="text-2xl font-bold">商品を編集</h1>
       <DeleteProductButton id={id} />
       <EditProductForm product={product} categories={categories} />

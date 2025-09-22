@@ -44,6 +44,12 @@ export default async function ProductDetailPage({
           一覧に戻る
         </Link>
         <Link
+          href="/favorites"
+          className="text-sm underline underline-offset-4"
+        >
+          お気に入り一覧へ
+        </Link>
+        <Link
           href={`/admin/products/${id}/edit`}
           className="text-sm underline underline-offset-4"
         >
