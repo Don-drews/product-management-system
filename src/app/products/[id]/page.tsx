@@ -4,6 +4,8 @@ import Link from "next/link";
 import { getProductById } from "@/server/products";
 import type { Metadata } from "next";
 import { getProductImageUrl } from "@/lib/storage/url";
+import { auth } from "@/auth";
+import { useSession } from "next-auth/react";
 
 function formatJPY(n: number) {
   return new Intl.NumberFormat("ja-JP").format(n);
@@ -27,6 +29,7 @@ export default async function ProductDetailPage({
 }: {
   params: Promise<{ id: string }>; // 受け取りをPromiseに
 }) {
+  const session = await auth();
   const { id } = await params; // ← まずawaitしてから取り出す
   const product = await getProductById(id);
   if (!product) notFound(); // notFound()は同じフォルダ階層の"not-found.tsx"が呼ばれる。なければ上の階層のnot-found.tsxが呼ばれる（親ディレクトリを順番に探していく 仕組み）
@@ -43,18 +46,22 @@ export default async function ProductDetailPage({
         <Link href="/products" className="text-sm underline underline-offset-4">
           一覧に戻る
         </Link>
-        <Link
-          href="/favorites"
-          className="text-sm underline underline-offset-4"
-        >
-          お気に入り一覧へ
-        </Link>
-        <Link
-          href={`/admin/products/${id}/edit`}
-          className="text-sm underline underline-offset-4"
-        >
-          編集する
-        </Link>
+        {session && (
+          <Link
+            href="/favorites"
+            className="text-sm underline underline-offset-4"
+          >
+            お気に入り一覧へ
+          </Link>
+        )}
+        {session && session?.user.role === "ADMIN" && (
+          <Link
+            href={`/admin/products/${id}/edit`}
+            className="text-sm underline underline-offset-4"
+          >
+            編集する
+          </Link>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
